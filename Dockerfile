@@ -12,3 +12,6 @@ EXPOSE 8080
 
 # Command to run the jar file
 ENTRYPOINT ["java", "-jar", "WrathFitnessPet.jar"]
+
+# Build the project before copying the JAR
+RUN ./gradlew build
