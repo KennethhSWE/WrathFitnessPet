@@ -1,0 +1,8 @@
+# Ignore Gradle cache directories
+.gradle
+
+# Ignore build output
+build/
+
+# Ignore the environment file
+.env
