@@ -13,13 +13,13 @@ import org.bson.Document;
 
 public class StravaAuth {
 
-    private static final String clientId = "132630";  // Replace with your Strava Client ID
-    private static final String clientSecret = "f9d400135fd6a6db459d6330fbf40e6389f440d3";  // Replace with your Strava Client Secret
+    private static final String clientId = System.getenv("STRAVA_CLIENT_ID"); // strava client id stored in the env file 
+    private static final String clientSecret = System.getenv("STRAVA_CLIENT_SECRET");  // strava client secret stored in the env file 
     private static final String redirectUri = "http://localhost:8080/exchange_token";  // Local server endpoint to handle redirect
     private static final OkHttpClient client = new OkHttpClient();  // OkHttp Client for making HTTP requests
 
     // MongoDB connection using the connection string
-    private static MongoClient mongoClient = MongoClients.create("mongodb+srv://booomlegshot:EllaAustin1@wrathfitnesscluster.scyzi.mongodb.net/?retryWrites=true&w=majority&appName=WrathFitnessCluster");
+    private static final MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
     
     private static MongoDatabase database = mongoClient.getDatabase("StravaUsers");  // Your DB name
     private static MongoCollection<Document> collection = database.getCollection("StravaTokens");
