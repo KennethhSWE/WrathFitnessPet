@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'application'  // Added the application plugin
+}
+
+group 'com.wrathfitnesspet'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // OkHttp for making HTTP requests
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+    // Spark for creating the local web server
+    implementation 'com.sparkjava:spark-core:2.9.3'
+
+    // Gson for JSON parsing
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+    // MongoDB Java Driver
+    implementation 'org.mongodb:mongodb-driver-sync:4.7.0'
+
+    // JUnit for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+// Specify the main class for the run task
+application {
+    mainClass = 'main.Main'  // Ensure this matches your package and class structure
+}
+
+test {
+    useJUnitPlatform()
+}
