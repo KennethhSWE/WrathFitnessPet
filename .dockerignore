@@ -9,3 +9,6 @@ build/
 
 # ignore build library folder 
 /build/libs/
+
+#ignore git 
+.git
