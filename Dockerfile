@@ -11,7 +11,7 @@ COPY . .
 RUN chmod +x ./gradlew
 
 # Build the application
-RUN ./gradlew clean build
+RUN ./gradlew clean build --info --stacktrace
 
 # Expose the port your app runs on (ensure this matches your app's port)
 EXPOSE 8080
