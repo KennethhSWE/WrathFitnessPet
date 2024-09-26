@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.1' //add the shadow plug in to move okhttp3 into the jar 
+    id 'com.github.johnrengelman.shadow' version '7.1.0' // Add the shadow plugin to move okhttp3 into the JAR
 }
 
 group 'com.wrathfitnesspet'
@@ -16,6 +16,7 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.9.3'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.mongodb:mongodb-driver-sync:4.7.0'
+    implementation 'org.slf4j:slf4j-simple:1.7.30'  // This provides a simple SLF4J binding
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
 }
@@ -38,6 +39,13 @@ jar {
             'Main-Class': 'main.Main'  // Replace with your actual main class path
         )
     }
+}
+
+// Configuration for shadow JAR
+tasks.named('shadowJar') {
+    archiveBaseName.set('WrathFitnessPet')
+    archiveClassifier.set('')
+    archiveVersion.set('1.0-SNAPSHOT')
 }
 
 test {
