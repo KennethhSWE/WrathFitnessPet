@@ -42,10 +42,23 @@ jar {
 }
 
 // Configuration for shadow JAR
-tasks.named('shadowJar') {
+shadowJar {
     archiveBaseName.set('WrathFitnessPet')
     archiveClassifier.set('')
     archiveVersion.set('1.0-SNAPSHOT')
+}
+
+// Ensure the shadow JAR task runs before the dependent tasks
+tasks.named('startScripts') {
+    dependsOn shadowJar
+}
+
+tasks.named('distZip') {
+    dependsOn shadowJar
+}
+
+tasks.named('distTar') {
+    dependsOn shadowJar
 }
 
 test {
