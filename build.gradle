@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.0.0' //add the shadow plug in to move okhttp3 into the jar 
 }
 
 group 'com.wrathfitnesspet'
