@@ -1,8 +1,14 @@
+import static spark.Spark.*;
+
 package main;
+
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to Wrath Fitness Pet!");
+
+        //Define root route for Spark 
+        get("/", (req, res) -> "Welcome to Wrath Fitness Pet");
 
         // OAuth flow for Strava API use
         System.out.println("Authorize the app by visiting : " + StravaAuth.getAuthUrl());
