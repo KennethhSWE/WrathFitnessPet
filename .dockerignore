@@ -6,3 +6,6 @@ build/
 
 # Ignore the environment file
 .env
+
+# ignore build library folder 
+/build/libs/
