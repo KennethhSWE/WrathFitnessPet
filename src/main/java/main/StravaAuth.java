@@ -10,6 +10,9 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 
 public class StravaAuth {
 
@@ -26,6 +29,7 @@ public class StravaAuth {
 
     // Function to generate the Strava authorization URL
     public static String getAuthUrl() {
+        String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8);
         return "https://www.strava.com/oauth/authorize?" +
                 "client_id=" + clientId +
                 "&redirect_uri=" + redirectUri +
@@ -35,8 +39,7 @@ public class StravaAuth {
 
     // Main method to set up the local server and handle the OAuth flow
     public static void startOAuthServer() {
-        port(8080);  // Set the server to listen on port 8080
-
+        
         get("/exchange_token", (req, res) -> {
             String authCode = req.queryParams("code");  // Get the authorization code from the URL
             if (authCode != null) {
