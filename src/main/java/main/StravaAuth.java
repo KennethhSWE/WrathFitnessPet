@@ -15,7 +15,7 @@ public class StravaAuth {
 
     private static final String clientId = System.getenv("STRAVA_CLIENT_ID"); // strava client id stored in the env file 
     private static final String clientSecret = System.getenv("STRAVA_CLIENT_SECRET");  // strava client secret stored in the env file 
-    private static final String redirectUri = "http://localhost:8080/exchange_token";  // Local server endpoint to handle redirect
+    private static final String redirectUri = "https://wrathfitnesspet.onrender.com/exchange_token";  // Local server endpoint to handle redirect
     private static final OkHttpClient client = new OkHttpClient();  // OkHttp Client for making HTTP requests
 
     // MongoDB connection using the connection string
