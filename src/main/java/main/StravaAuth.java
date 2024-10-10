@@ -101,16 +101,19 @@ public class StravaAuth {
     // Function to parse and store tokens in MongoDB
     public static void parseAndStoreTokens(String responseData) {
         JsonObject jsonObject = JsonParser.parseString(responseData).getAsJsonObject();
-        String accessToken = jsonObject.get("access_token").getAsString();
-        String refreshToken = jsonObject.get("refresh_token").getAsString();
-        long expiresAt = jsonObject.get("expires_at").getAsLong();
+        
+        //Declaring athleteId 
         String athleteId = jsonObject.getAsJsonObject("athlete").get("id").getAsString();
 
         try {
+            //encrypting the tokens 
+            String accessToken = jsonObject.get("access_token").getAsString(); 
+            String refreshToken = jsonObject.get("refresh_token").getAsString();
             String encryptedAccessToken = EncryptionUtil.encrypt(accessToken);
             String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
-        }
 
+            long expiresAt = jsonObject.get("expires_at").getAsLong();
+        
         // Create the token document
         Document tokenDocument = new Document("athlete_id", athleteId)
                 .append("access_token", encryptedAccessToken)
@@ -123,12 +126,15 @@ public class StravaAuth {
                 new Document("$set", tokenDocument),
                 new UpdateOptions().upsert(true)
         );
-        logger.info("Tokens stored for athlete_id: " + athleteId);
-    }
 
-        catch (Exception e) {
-            logger.error("Error encrypting tokens for ahtelete_id: " + athleteId, e);
+        logger.info("Tokens stored for athlete_id: " + athleteId);
+
+    }   catch (Exception e) {
+        //Now athleteId is accesable here
+            logger.error("Error encrypting tokens for ahtelete_id: " + athleteId);
         }
+    }
+        
 
     // Function to refresh the access token using the refresh token
     public static void refreshAccessToken(String athleteId) throws IOException {
@@ -167,49 +173,7 @@ public class StravaAuth {
             logger.error("No token found for athlete_id: " + athleteId);
             throw new IOException("No token found for athlete_id: " + athleteId);
         }
-    }public static void refreshAccessToken(String athleteId) throws IOException {
-    Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
-
-    if (userToken != null) {
-        try {
-            // HIGHLIGHT: Decrypt refresh token before use
-            String refreshToken = EncryptionUtil.decrypt(userToken.getString("refresh_token"));  // HIGHLIGHT: Decryption added
-
-            RequestBody formBody = new FormBody.Builder()
-                    .add("client_id", clientId)
-                    .add("client_secret", clientSecret)
-                    .add("grant_type", "refresh_token")
-                    .add("refresh_token", refreshToken)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url("https://www.strava.com/oauth/token")
-                    .post(formBody)
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    logger.error("HTTP error during token refresh: " + response.code());
-                    logger.error("Error Body: " + response.body().string());
-                    throw new IOException("Unexpected code " + response);
-                }
-
-                String responseData = response.body().string();
-                logger.info("Token refresh response data: " + responseData);
-
-                // Update the stored tokens with the new ones
-                parseAndStoreTokens(responseData);
-            }
-        } catch (Exception e) {
-            logger.error("Error decrypting refresh token for athlete_id: " + athleteId, e);  // HIGHLIGHT: Handle decryption error
-            throw new IOException("Error decrypting refresh token", e);
-        }
-    } else {
-        logger.error("No token found for athlete_id: " + athleteId);
-        throw new IOException("No token found for athlete_id: " + athleteId);
     }
-}
-
 
     // Function to get a valid access token, refreshing if necessary
     public static String getValidAccessToken(String athleteId) throws IOException {
@@ -261,5 +225,55 @@ public class StravaAuth {
             logger.info("Activities data: " + responseData);
             return responseData;
         }
+    }
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    public static String getClientid() {
+        return clientId;
+    }
+
+    public static String getClientsecret() {
+        return clientSecret;
+    }
+
+    public static String getRedirecturi() {
+        return redirectUri;
+    }
+
+    public static OkHttpClient getClient() {
+        return client;
+    }
+
+    public static MongoClient getMongoclient() {
+        return mongoClient;
+    }
+
+    public static MongoDatabase getDatabase() {
+        return database;
+    }
+
+    public static void setDatabase(MongoDatabase database) {
+        StravaAuth.database = database;
+    }
+
+    public static MongoCollection<Document> getCollection() {
+        return collection;
+    }
+
+    public static void setCollection(MongoCollection<Document> collection) {
+        StravaAuth.collection = collection;
+    }
+
+    private Exception e;
+
+    public Exception getE() {
+        return null;
+    }
+
+    public void setE(Exception e) {
+        this.e = e;
     }
 }
