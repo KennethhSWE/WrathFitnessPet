@@ -106,10 +106,15 @@ public class StravaAuth {
         long expiresAt = jsonObject.get("expires_at").getAsLong();
         String athleteId = jsonObject.getAsJsonObject("athlete").get("id").getAsString();
 
+        try {
+            String encryptedAccessToken = EncryptionUtil.encrypt(accessToken);
+            String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
+        }
+
         // Create the token document
         Document tokenDocument = new Document("athlete_id", athleteId)
-                .append("access_token", accessToken)
-                .append("refresh_token", refreshToken)
+                .append("access_token", encryptedAccessToken)
+                .append("refresh_token", encryptedRefreshToken)
                 .append("expires_at", expiresAt);
 
         // Update or insert the document in MongoDB
@@ -120,6 +125,10 @@ public class StravaAuth {
         );
         logger.info("Tokens stored for athlete_id: " + athleteId);
     }
+
+        catch (Exception e) {
+            logger.error("Error encrypting tokens for ahtelete_id: " + athleteId, e);
+        }
 
     // Function to refresh the access token using the refresh token
     public static void refreshAccessToken(String athleteId) throws IOException {
@@ -158,30 +167,79 @@ public class StravaAuth {
             logger.error("No token found for athlete_id: " + athleteId);
             throw new IOException("No token found for athlete_id: " + athleteId);
         }
+    }public static void refreshAccessToken(String athleteId) throws IOException {
+    Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
+
+    if (userToken != null) {
+        try {
+            // HIGHLIGHT: Decrypt refresh token before use
+            String refreshToken = EncryptionUtil.decrypt(userToken.getString("refresh_token"));  // HIGHLIGHT: Decryption added
+
+            RequestBody formBody = new FormBody.Builder()
+                    .add("client_id", clientId)
+                    .add("client_secret", clientSecret)
+                    .add("grant_type", "refresh_token")
+                    .add("refresh_token", refreshToken)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url("https://www.strava.com/oauth/token")
+                    .post(formBody)
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    logger.error("HTTP error during token refresh: " + response.code());
+                    logger.error("Error Body: " + response.body().string());
+                    throw new IOException("Unexpected code " + response);
+                }
+
+                String responseData = response.body().string();
+                logger.info("Token refresh response data: " + responseData);
+
+                // Update the stored tokens with the new ones
+                parseAndStoreTokens(responseData);
+            }
+        } catch (Exception e) {
+            logger.error("Error decrypting refresh token for athlete_id: " + athleteId, e);  // HIGHLIGHT: Handle decryption error
+            throw new IOException("Error decrypting refresh token", e);
+        }
+    } else {
+        logger.error("No token found for athlete_id: " + athleteId);
+        throw new IOException("No token found for athlete_id: " + athleteId);
     }
+}
+
 
     // Function to get a valid access token, refreshing if necessary
     public static String getValidAccessToken(String athleteId) throws IOException {
-        Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
+    Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
 
-        if (userToken != null) {
-            long expiresAt = userToken.getLong("expires_at");
-            long currentTime = System.currentTimeMillis() / 1000L; // Current time in seconds
+    if (userToken != null) {
+        long expiresAt = userToken.getLong("expires_at");
+        long currentTime = System.currentTimeMillis() / 1000L; // Current time in seconds
 
-            if (expiresAt <= currentTime) {
-                // Token has expired; refresh it
-                logger.info("Access token expired for athlete_id: " + athleteId + ". Refreshing token.");
-                refreshAccessToken(athleteId);
-                // Retrieve the updated token
-                userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
-            }
-
-            return userToken.getString("access_token");
-        } else {
-            logger.error("No token found for athlete_id: " + athleteId);
-            throw new IOException("No token found for athlete_id: " + athleteId);
+        if (expiresAt <= currentTime) {
+            // Token has expired; refresh it
+            logger.info("Access token expired for athlete_id: " + athleteId + ". Refreshing token.");
+            refreshAccessToken(athleteId);
+            // Retrieve the updated token
+            userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
         }
+
+        try {
+            //  Decrypt access token before returning
+            return EncryptionUtil.decrypt(userToken.getString("access_token"));  // HIGHLIGHT: Decryption added
+        } catch (Exception e) {
+            logger.error("Error decrypting access token for athlete_id: " + athleteId, e);  // HIGHLIGHT: Handle decryption error
+            throw new IOException("Error decrypting access token", e);
+        }
+    } else {
+        logger.error("No token found for athlete_id: " + athleteId);
+        throw new IOException("No token found for athlete_id: " + athleteId);
     }
+}
+
 
     // Example method to get athlete activities
     public static String getAthleteActivities(String athleteId) throws IOException {

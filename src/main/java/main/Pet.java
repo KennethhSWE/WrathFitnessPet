@@ -71,4 +71,9 @@ public class Pet {
         // Increase the requirement to level to the next level
         this.xpToNextLevel = 100 * (this.level * this.level);
     }
+
+    // private void skillTree() {
+        // System.out.println("Choose A Skill");
+    
+    // }
 }
