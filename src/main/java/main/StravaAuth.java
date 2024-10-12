@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import okhttp3.*;
+import okhttp3.OkHttpClient;
 import static spark.Spark.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -104,9 +105,11 @@ public class StravaAuth {
     // Function to parse and store tokens in MongoDB
     public static void parseAndStoreTokens(String responseData) {
         JsonObject jsonObject = JsonParser.parseString(responseData).getAsJsonObject();
+        logger.info("Parsing response dara for storing tokens.");
         
         // Declaring athleteId 
         String athleteId = jsonObject.getAsJsonObject("athlete").get("id").getAsString();
+        logger.info("Parsed athlete_id: " + athleteId);
 
         try {
             // Encrypting the tokens 
@@ -114,6 +117,7 @@ public class StravaAuth {
             String refreshToken = jsonObject.get("refresh_token").getAsString();
             String encryptedAccessToken = EncryptionUtil.encrypt(accessToken);
             String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
+            logger.info("Access and Refresh tokens parsed. Access Token: " + accessToken + ", Refresh Token: " + refreshToken);
 
             long expiresAt;
             try {
@@ -128,7 +132,6 @@ public class StravaAuth {
                     .append("access_token", encryptedAccessToken)
                     .append("refresh_token", encryptedRefreshToken)
                     .append("expires_at", expiresAt);
-
                 logger.info("Prepared token document for athlete_id:" + athleteId + "with expires_at: " + expiresAt);
 
             // Update or insert the document in MongoDB
@@ -148,13 +151,18 @@ public class StravaAuth {
 
     // Function to refresh the access token using the refresh token
     public static void refreshAccessToken(String athleteId) throws IOException {
+        logger.info("Refreshing access token for athlete_id: " + athleteId);
         // Retrieve the user's refresh token from the database
         Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
 
         if (userToken != null) {
+            logger.info("User token retrieved from MongoDB for athlete_id: " + athleteId);
+
             String refreshToken;
             try {
                 refreshToken = EncryptionUtil.decrypt(userToken.getString("refresh_token"));
+                logger.info("Refresh token decrypted for athlete_id: " + athleteId);
+
             } catch (Exception e) {
                 logger.error("Error decrypting refresh token for athlete_id: " + athleteId, e);
                 throw new IOException("Error decrypting refresh token", e);
@@ -193,12 +201,18 @@ public class StravaAuth {
 
     // Function to get a valid access token, refreshing if necessary
     public static String getValidAccessToken(String athleteId) throws IOException {
+        logger.info("Getting valid access token for athlete_id: " + athleteId);
+        
         Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
 
         if (userToken != null) {
+            logger.info("User token retrieved from MongoDB for athlete_id: " + athleteId);
+
             long expiresAt;
             try {
                 expiresAt = userToken.getLong("expires_at");
+                logger.info("Token experation time retrieved: " + expiresAt + " for athlete_id: " + athleteId);
+
             } catch (NullPointerException e) {
                 logger.error("Missing expires_at for athlete_id: " + athleteId, e);
                 throw new IOException("Missing expires_at for athlete_id: " + athleteId, e);
