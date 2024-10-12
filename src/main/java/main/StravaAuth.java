@@ -112,7 +112,16 @@ public class StravaAuth {
             String encryptedAccessToken = EncryptionUtil.encrypt(accessToken);
             String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
 
-            long expiresAt = jsonObject.get("expires_at").getAsLong();
+            long expiresAt;
+            try {
+                expiresAt = jsonObject.get("expires_at").getAsLong();
+            }
+            
+            catch (Exception e) {
+                logger.error("Error getting expires_at for athlete_id: " + athleteId, e);
+
+                return; //exits the function if expires_at is missing. 
+            }
         
         // Create the token document
         Document tokenDocument = new Document("athlete_id", athleteId)
@@ -142,7 +151,14 @@ public class StravaAuth {
         Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
 
         if (userToken != null) {
-            String refreshToken = userToken.getString("refresh_token");
+            String refreshToken;
+            try {
+                refreshToken = EncryptionUtil.decrypt(userToken.getString("refresh_token"));
+            }
+            catch (Exception e) {
+                logger.error("Error decrypting refresh token for athlete_id: " + athleteId, e);
+                throw new IOException("Error decrypting refresh token", e);
+            }
 
             RequestBody formBody = new FormBody.Builder()
                     .add("client_id", clientId)
@@ -180,7 +196,15 @@ public class StravaAuth {
     Document userToken = collection.find(Filters.eq("athlete_id", athleteId)).first();
 
     if (userToken != null) {
-        long expiresAt = userToken.getLong("expires_at");
+        long expiresAt;
+        try {
+            expiresAt = userToken.getLong("expires_at");
+        }
+        catch (NullPointerException e) {
+            logger.error("Missing expires_at for athlete_id: " + athleteId, e);
+            throw new IOException("Missing expires_at for athlete_id: " + athleteId, e);
+        }
+        
         long currentTime = System.currentTimeMillis() / 1000L; // Current time in seconds
 
         if (expiresAt <= currentTime) {

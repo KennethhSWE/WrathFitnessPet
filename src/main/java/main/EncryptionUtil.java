@@ -27,5 +27,10 @@ public class EncryptionUtil {
         byte[] decodedData = Base64.getDecoder().decode(encryptedData);
         byte[] originalData = cipher.doFinal(decodedData);
         return new String(originalData);
+
+        if (encryptionKey == null || encryptionKey.length() !=16) {
+            throw new IllegalArgumentException("Invalid ENCRYPTION_KEY length. It must be 16 characters long.")
+        } 
+
     }
 }
