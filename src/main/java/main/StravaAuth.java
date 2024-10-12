@@ -31,6 +31,7 @@ public class StravaAuth {
 
     // MongoDB connection using the connection string
     private static final MongoClient mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
+        logger.info("Connecting to MongoDB at: " + System.getenv("MONGO_DB_URI"));
 
     static MongoDatabase database = mongoClient.getDatabase("StravaUsers");  // Your DB name
     static MongoCollection<Document> collection = database.getCollection("StravaTokens");
@@ -125,6 +126,8 @@ public class StravaAuth {
                     .append("access_token", encryptedAccessToken)
                     .append("refresh_token", encryptedRefreshToken)
                     .append("expires_at", expiresAt);
+
+                logger.info("Prepared token document for athlete_id:" + athleteID + "with expires_at: " + expiresAt);
 
             // Update or insert the document in MongoDB
             collection.updateOne(
