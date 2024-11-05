@@ -19,7 +19,7 @@ public class Avatar {
         this.xpToNextLevel = 100; // Starting XP required for level 1 to 2
     }
 
-    public void completeWorkout(int weight, int, reps, boolean hitDailyGoal, boolean hitStreakBonus ) {
+    public void completeWorkout(int weight, int reps, boolean hitDailyGoal, boolean hitStreakBonus ) {
         int woroutXp = (weight * reps) / 10; 
         if (hitDailyGoal) {
             workoutXp += 10;
