@@ -20,7 +20,7 @@ public class Avatar {
     }
 
     public void completeWorkout(int weight, int reps, boolean hitDailyGoal, boolean hitStreakBonus ) {
-        int woroutXp = (weight * reps) / 10; 
+        int workoutXp = (weight * reps) / 10; 
         if (hitDailyGoal) {
             workoutXp += 10;
         }
@@ -42,6 +42,10 @@ public class Avatar {
     public int getStrength(){ return strength;}
     public int getStamina(){ return stamina;}
     public int getCardioHealth(){ return cardioHealth;}
+
+    public String getName() {
+        return name;
+    }
 
     // Level up and adjust all XP requirements
     private void levelUp() {
