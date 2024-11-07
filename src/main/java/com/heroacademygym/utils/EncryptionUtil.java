@@ -1,4 +1,4 @@
-package main;
+package com.heroacademygym.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

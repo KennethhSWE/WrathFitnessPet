@@ -1,5 +1,6 @@
-package main;
+package com.heroacademygym.services;
 
+import com.heroacademygym.utils.EncryptionUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

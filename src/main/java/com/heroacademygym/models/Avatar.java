@@ -1,4 +1,4 @@
-package main;
+package com.heroacademygym.models;
 
 public class Avatar {
     private String name;

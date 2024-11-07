@@ -1,4 +1,4 @@
-package main;
+package com.heroacademygym.services;
 
 import java.io.IOException;
 import java.util.Timer;

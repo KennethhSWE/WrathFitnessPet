@@ -1,7 +1,9 @@
-package main;
+package com.heroacademygym;
 
 import java.util.Date;
 import static spark.Spark.*;
+import com.heroacademygym.models.SignUpCode;
+import com.heroacademygym.models.User;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;

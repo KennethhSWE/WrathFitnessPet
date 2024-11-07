@@ -1,4 +1,4 @@
-package main;
+package com.heroacademygym.models;
 
 import org.bson.types.ObjectId;
 
