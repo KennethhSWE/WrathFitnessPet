@@ -1,59 +1,52 @@
 package main;
 
 import static spark.Spark.*;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.ReplaceOptions;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class Main {
-    private static Avatar myAvatar; // Make this static so it's accessible in all routes
+    private static MongoCollection<Document> signUpCodeCollection;
+    private static MongoCollection<Document> userCollection;
+    private static MongoClient mongoClient;
+    private static MongoCollection<Document> workoutCollection;
 
     public static void main(String[] args) {
-        // Set the port from the environment variable or default to 8080
         String portEnv = System.getenv("PORT");
-        if (portEnv != null) {
+        if (!isNullOrEmpty(portEnv)) {
             port(Integer.parseInt(portEnv));
         } else {
             port(8080); // Default port for local testing
         }
 
-        // Bind to all network interfaces
         ipAddress("0.0.0.0");
+
+        mongoClient = MongoClients.create(System.getenv("MONGODB_URI"));
+        MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
+        signUpCodeCollection = database.getCollection("SignUpCodes");
+        userCollection = database.getCollection("Users");
+        workoutCollection = database.getCollection("Workouts"); 
 
         System.out.println("Welcome to Hero Academy Gym!");
 
-        // Define the root route for Spark
         get("/", (req, res) -> "Welcome to Hero Academy Gym");
 
-        // Start OAuth server (registers additional routes)
-        StravaAuth.startOAuthServer();
-
-        // Start the token refresh task
-        TokenRefresher.startTokenRefreshTask();
-
-        // Route to create a new account and avatar
-        post("/create-account", (req, res) -> {
-            String name = req.queryParams("name");
-            if (name == null || name.isEmpty()) {
-                return "Error: Name is required to create an account.";
-            }
-            myAvatar = new Avatar(name);
-            return "Account created for " + name + " with a new avatar!";
-        });
-
-        // Route to view the avatar's stats
-        get("/view-avatar", (req, res) -> {
-            if (myAvatar == null) {
-                return "No avatar created yet. Please create an account first.";
-            }
-            return "Avatar Stats:\n" + 
-                    "Name: " + myAvatar.getName() + "\n" +
-                    "Strength: " + myAvatar.getStrength() + "\n" +
-                    "Stamina: " + myAvatar.getStamina() + "\n" +
-                    "Cardio Health: " + myAvatar.getCardioHealth(); 
-        });
-
-        // Route to simulate or test a workout
         post("/workout", (req, res) -> {
-            if (myAvatar == null) {
-                return "No avatar created yet. Please create an account first.";
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                return "Please log in to log a workout."
+            }
+
+            ObjectId userId = new ObjectId(userIdStr);
+            User user = getUserById(userId);
+
+            if (user == null) {
+                return "User not found. Please create an account first.";
             }
 
             int weight = Integer.parseInt(req.queryParams("weight"));
@@ -61,21 +54,226 @@ public class Main {
             boolean hitDailyGoal = Boolean.parseBoolean(req.queryParams("hitDailyGoal"));
             boolean hitStreakBonus = Boolean.parseBoolean(req.queryParams("hitStreakBonus"));
 
-            myAvatar.completeWorkout(weight, reps, hitDailyGoal, hitStreakBonus);
-            return "Workout complete for " + myAvatar.getName() + "!";
+            user.updateAvatarStats(weight, reps, hitDailyGoal, hitStreakBonus);
+            saveUser(user);
+
+            // log the workout in MongoDB
+            Document workoutLog = new Document("userId", userId)
+            .append("weight", weight)
+            .append("reps", reps)
+            .append("hitDailyGoal", hitDailyGoal)
+            .append("hitStreakBonus", hitStreakBonus)
+            .append("date", new Date()); 
+
+            workoutCollection.insertOne(workoutLog); //saves the workout log 
+
+            return "Workout complete for" + user.getUsername() + "!";
         });
 
-        // Create a new avatar for initial testing
-        myAvatar = new Avatar("Champion");
+        // New endpoint to view the workout history 
+        get("/view-workouts", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                return "Please log in to view your workout history.";
+            }
 
-        // Testing avatar interaction code
-        myAvatar.completeWorkout(100, 10, true, true);
-        myAvatar.setAppearance("Warrior Gear");
+            ObjectId userId = new ObjectId(userIdStr);
+            StringBuilder workoutHistory = new StringBuilder("Workout History:\n");
 
-        // Display stats after a workout
-        System.out.println("Strength: " + myAvatar.getStrength());
-        System.out.println("Stamina: " + myAvatar.getStamina());
-        System.out.println("Cardio Health: " + myAvatar.getCardioHealth());
+            // fetch workouts from the collection 
+            workoutCollection.find(Filters.eq("userId", userId)).forEach(doc -> {
+                workoutHistory.append("Date: ").append(doc.getDate("date"))
+                    .append(", Weight: ").append(doc.getInteger("weight"))
+                    .append(", Reps: ").append(doc.getInteger("reps"))
+                    .append(", Daily Goal: ").append(doc.getBoolean("hitDailyGoal"))
+                    .append(", Streak Bonus: ").append(doc.getBoolean("hitStreakBonus"))
+                    .append("\n");
+            });
+
+            return workoutHistory.length() > 0 ? workoutHistory.toString() : "No workouts found.";
+        });
+
+        // Route to create a new account and avatar with sign-up code verification
+        post("/create-account", (req, res) -> {
+            String username = req.queryParams("username");
+            String password = req.queryParams("password");
+            String signUpCode = req.queryParams("signUpCode");
+
+            if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(signUpCode)) {
+                return "Error: Username, password, and sign-up code are required.";
+            }
+
+            Document codeDoc = signUpCodeCollection.find(Filters.eq("code", signUpCode)).first();
+            if (codeDoc == null || codeDoc.getBoolean("isRedeemed")) {
+                return "Error: Invalid or already redeemed sign-up code.";
+            }
+
+            ObjectId userId = new ObjectId();
+            Document update = new Document("$set", new Document("isRedeemed", true).append("redeemedBy", userId));
+            signUpCodeCollection.updateOne(Filters.eq("code", signUpCode), update);
+
+            User newUser = new User(username, password);
+            newUser.setId(userId); // Set the generated ID
+            saveUser(newUser);
+            return "Account created for " + username + " with a verified sign-up code!";
+        });
+
+        // Login route
+        post("/login", (req, res) -> {
+            String username = req.queryParams("username");
+            String password = req.queryParams("password");
+
+            if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
+                return "Error: Username and password are required.";
+            }
+
+            Document userDoc = userCollection.find(Filters.eq("username", username)).first();
+            if (userDoc == null || !userDoc.getString("password").equals(password)) {
+                return "Error: Invalid username or password.";
+            }
+
+            ObjectId userId = userDoc.getObjectId("_id");
+            req.session(true).attribute("userId", userId.toHexString());
+            return "Login successful for user " + username;
+        });
+
+        // Logout route
+        post("/logout", (req, res) -> {
+            req.session().invalidate();
+            return "You have been logged out.";
+        });
+
+        // Route to view the avatar's stats
+        get("/view-avatar", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                return "Please log in to view your avatar.";
+            }
+
+            ObjectId userId = new ObjectId(userIdStr);
+            User user = getUserById(userId);
+
+            if (user == null) {
+                return "User not found.";
+            }
+
+            return "Avatar Stats:\n" +
+                   "Name: " + user.getUsername() + "\n" +
+                   "Strength: " + user.getAvatar().getStrength() + "\n" +
+                   "Stamina: " + user.getAvatar().getStamina() + "\n" +
+                   "Cardio Health: " + user.getAvatar().getCardioHealth();
+        });
+
+        // Route to simulate or test a workout
+        post("/workout", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                return "Please log in to log a workout.";
+            }
+
+            ObjectId userId = new ObjectId(userIdStr);
+            User user = getUserById(userId);
+
+            if (user == null) {
+                return "User not found. Please create an account first.";
+            }
+
+            int weight = Integer.parseInt(req.queryParams("weight"));
+            int reps = Integer.parseInt(req.queryParams("reps"));
+            boolean hitDailyGoal = Boolean.parseBoolean(req.queryParams("hitDailyGoal"));
+            boolean hitStreakBonus = Boolean.parseBoolean(req.queryParams("hitStreakBonus"));
+
+            user.updateAvatarStats(weight, reps, hitDailyGoal, hitStreakBonus);
+            saveUser(user);
+
+            return "Workout complete for " + user.getUsername() + "!";
+        });
+
+        // Route to set the avatar's appearance
+        post("/set-avatar-appearance", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                return "Please log in to customize your avatar.";
+            }
+
+            ObjectId userId = new ObjectId(userIdStr);
+            User user = getUserById(userId);
+
+            if (user == null) {
+                return "User not found.";
+            }
+
+            String outfitChoice = req.queryParams("outfitChoice");
+            if (isNullOrEmpty(outfitChoice)) {
+                return "Error: Outfit choice is required.";
+            }
+
+            user.getAvatar().setAppearance(outfitChoice);
+            saveUser(user);
+
+            return "Avatar appearance updated for " + user.getUsername() + "!";
+        });
+    }
+
+    public static boolean isNullOrEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    public static String generateSignUpCode() {
+        String code = generateRandomCode();
+        SignUpCode signUpCode = new SignUpCode(code);
+
+        Document doc = new Document("code", signUpCode.getCode())
+            .append("isRedeemed", signUpCode.isRedeemed())
+            .append("createdAt", signUpCode.getCreatedAt());
+
+        signUpCodeCollection.insertOne(doc);
+        System.out.println("Generated sign-up code: " + code);
+        return code;
+    }
+
+    private static String generateRandomCode() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            code.append(chars.charAt((int) (Math.random() * chars.length())));
+        }
+        return code.toString();
+    }
+
+    public static boolean redeemSignUpCode(String code, ObjectId userId) {
+        Document foundCode = signUpCodeCollection.find(Filters.eq("code", code)).first();
+
+        if (foundCode == null || foundCode.getBoolean("isRedeemed")) {
+            System.out.println("Invalid or already redeemed code.");
+            return false;
+        }
+
+        Document update = new Document("$set", new Document("isRedeemed", true).append("redeemedBy", userId));
+        signUpCodeCollection.updateOne(Filters.eq("code", code), update);
+
+        System.out.println("Code redeemed successfully for user ID: " + userId);
+        return true;
+    }
+
+    private static User getUserById(ObjectId userId) {
+        Document doc = userCollection.find(Filters.eq("_id", userId)).first();
+        if (doc == null) return null;
+
+        User user = new User(doc.getString("username"), doc.getString("password"));
+        user.getAvatar().setStrength(doc.getInteger("strength"));
+        user.getAvatar().setStamina(doc.getInteger("stamina"));
+        user.getAvatar().setCardioHealth(doc.getInteger("cardioHealth"));
+        return user;
+    }
+
+    private static void saveUser(User user) {
+        Document doc = new Document("username", user.getUsername())
+            .append("password", user.getPassword())
+            .append("strength", user.getAvatar().getStrength())
+            .append("stamina", user.getAvatar().getStamina())
+            .append("cardioHealth", user.getAvatar().getCardioHealth());
+
+        userCollection.replaceOne(Filters.eq("_id", user.getId()), doc, new ReplaceOptions().upsert(true));
     }
 }
-

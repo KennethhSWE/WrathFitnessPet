@@ -19,7 +19,7 @@ public class Avatar {
         this.xpToNextLevel = 100; // Starting XP required for level 1 to 2
     }
 
-    public void completeWorkout(int weight, int reps, boolean hitDailyGoal, boolean hitStreakBonus ) {
+    public void completeWorkout(int weight, int reps, boolean hitDailyGoal, boolean hitStreakBonus) {
         int workoutXp = (weight * reps) / 10; 
         if (hitDailyGoal) {
             workoutXp += 10;
@@ -29,36 +29,39 @@ public class Avatar {
         }
         xp += workoutXp;
 
-        if (xp >= xpToNextLevel) {
+        System.out.println(name + " gained " + workoutXp + " XP! Total XP: " + xp);
+        checkLevelUp();
+    }
+
+    // Check if the XP earned is enough for leveling up
+    private void checkLevelUp() {
+        while (xp >= xpToNextLevel) {
             levelUp();
         }
-        System.out.println(name + " gained" + workoutXp + " XP! Total XP: " + xp);
     }
 
-    public void setAppearance(String outFitChoice) {
-        System.out.print(name + " is now wearing " + outFitChoice);
-    }
-
-    public int getStrength(){ return strength;}
-    public int getStamina(){ return stamina;}
-    public int getCardioHealth(){ return cardioHealth;}
-
-    public String getName() {
-        return name;
-    }
-
-    // Level up and adjust all XP requirements
+    // Level up and adjust XP requirements and stats
     private void levelUp() {
         level++;
-
-        // Handle the extra XP carried over
-        xp -= this.xpToNextLevel;
-
-        // Increase the requirement to level to the next level
-        xpToNextLevel += 50;
+        xp -= xpToNextLevel; // Retain remaining XP after leveling up
+        xpToNextLevel = 100 * level; // Scale XP requirement with each level
         strength += 5;
-        stamina += 5; 
+        stamina += 5;
         cardioHealth += 5;
-        System.out.println(name + " leveled up to level " + level + "!"); 
+
+        System.out.println(name + " leveled up to level " + level + "! New stats - Strength: " + strength + ", Stamina: " + stamina + ", Cardio Health: " + cardioHealth);
     }
+
+    public void setAppearance(String outfitChoice) {
+        System.out.println(name + " is now wearing " + outfitChoice);
+    }
+
+    // Getters for avatar stats
+    public int getStrength() { return strength; }
+    public int getStamina() { return stamina; }
+    public int getCardioHealth() { return cardioHealth; }
+    public String getName() { return name; }
+    public int getXp() { return xp; }
+    public int getLevel() { return level; }
+    public int getXpToNextLevel() { return xpToNextLevel; }
 }
