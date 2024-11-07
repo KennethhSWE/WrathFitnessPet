@@ -39,6 +39,13 @@ public class Main {
 
         get("/", (req, res) -> "Welcome to Hero Academy Gym");
 
+        // Add this temporary route to access the index.html file in the frontend folder Remove AFTER TEST!
+        get("/frontend", (req, res) -> {
+            res.redirect("/index.html");
+            return null;
+        });
+
+
         post("/workout", (req, res) -> {
             String userIdStr = req.session().attribute("userId");
             if (isNullOrEmpty(userIdStr)) {
@@ -280,3 +287,4 @@ public class Main {
         userCollection.replaceOne(Filters.eq("_id", user.getId()), doc, new ReplaceOptions().upsert(true));
     }
 }
+
