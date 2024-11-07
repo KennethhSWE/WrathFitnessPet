@@ -29,7 +29,7 @@ public class Main {
 
         //staticFiles.externalLocation("frontend");
 
-        mongoClient = MongoClients.create(System.getenv("MONGODB_URI"));
+        mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
         signUpCodeCollection = database.getCollection("SignUpCodes");
         userCollection = database.getCollection("Users");
