@@ -29,7 +29,7 @@ java {
 
 // Specify the main class for the run task
 application {
-    mainClass = 'main.Main'  // Ensure this matches your package and class structure
+    mainClass = 'com.heroacademygym.Main'  // Ensure this matches your package and class structure
 }
 
 // Add Main-Class to the JAR manifest
