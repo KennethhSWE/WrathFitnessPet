@@ -8,10 +8,12 @@ async function signUp() {
     const confirmPassword = document.getElementById('confirm-password').value;
     const fitnessGoal = document.getElementById('fitness-goal').value;
 
-    // Basic validation
+    // Password validation
     if (password !== confirmPassword) {
-        alert("Passwords do not match. Please re-enter your password.");
+        document.getElementById('password-error').innerText = "Passwords do not match. Please re-enter.";
         return;
+    } else {
+        document.getElementById('password-error').innerText = ""; // Clear any previous error
     }
 
     const response = await fetch('/signup', {
