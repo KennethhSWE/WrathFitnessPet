@@ -27,7 +27,7 @@ public class Main {
 
         ipAddress("0.0.0.0");
 
-        staticFiles.externalLocation("frontend");
+        //staticFiles.externalLocation("frontend");
 
         mongoClient = MongoClients.create(System.getenv("MONGODB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
