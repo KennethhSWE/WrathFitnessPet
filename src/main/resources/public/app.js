@@ -39,3 +39,22 @@ async function viewAvatar() {
     const stats = await response.text();
     document.getElementById('avatar-stats').innerText = stats;
 }
+
+// Onboarding Functions
+function nextScreen(nextScreenId) {
+    // Hide the currently active screen
+    const activeScreen = document.querySelector('.onboarding-active');
+    activeScreen.classList.remove('onboarding-active');
+
+    // Show the next screen
+    const nextScreen = document.getElementById(nextScreenId);
+    nextScreen.classList.add('onboarding-active');
+}
+
+function finishOnboarding() {
+    // Hide the onboarding container
+    document.getElementById('onboarding-container').style.display = 'none';
+
+    // Optionally, show the main app content (login section or dashboard)
+    document.getElementById('login-section').style.display = 'block';
+}

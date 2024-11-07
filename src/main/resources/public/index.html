@@ -17,6 +17,39 @@
         </nav>
     </header>
 
+    <!-- Onboarding Flow Container -->
+    <div id="onboarding-container" class="onboarding-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="onboarding-screen onboarding-active">
+            <h2>Welcome to Hero Academy Gym!</h2>
+            <p>We're here to help you achieve your fitness goals and have fun doing it!</p>
+            <button class="onboarding-button" onclick="nextScreen('profile-setup')">Get Started</button>
+        </div>
+
+        <!-- Profile Setup Screen -->
+        <div id="profile-setup" class="onboarding-screen">
+            <h2>Set Up Your Profile</h2>
+            <input type="text" id="name" placeholder="Name">
+            <input type="number" id="age" placeholder="Age">
+            <input type="text" id="fitness-goal" placeholder="Fitness Goal">
+            <button class="onboarding-button" onclick="nextScreen('feature-overview')">Next</button>
+        </div>
+
+        <!-- Feature Overview Screen -->
+        <div id="feature-overview" class="onboarding-screen">
+            <h2>Discover Our Features</h2>
+            <p>Track workouts, earn stats, grow your avatar, and much more!</p>
+            <button class="onboarding-button" onclick="nextScreen('start-screen')">Next</button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="onboarding-screen">
+            <h2>You're All Set!</h2>
+            <p>Let's get started on your fitness journey!</p>
+            <button class="onboarding-button" onclick="finishOnboarding()">Start Using the App</button>
+        </div>
+    </div>
+
     <!-- Main Content Section -->
     <main class="container">
         <!-- Login Section -->
