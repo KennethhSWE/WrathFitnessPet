@@ -19,35 +19,39 @@
         </nav>
     </header>
 
-    <!-- Onboarding or Sign-Up Section for New Members -->
-    <div id="onboarding-container" class="onboarding-container onboarding-active">
-        <!-- Onboarding / Sign-Up Steps -->
+    <!-- Registration Section for New Members -->
+    <div id="registration-container" class="registration-container">
         <h2>Welcome to Hero Academy Gym!</h2>
-        <p>We're here to help you achieve your fitness goals and have fun doing it!</p>
-        <button class="onboarding-button" onclick="nextScreen('profile-setup')">Get Started</button>
+        <p>Join us and start your journey to a stronger you!</p>
 
-        <div id="profile-setup" class="onboarding-screen">
-            <h2>Set Up Your Profile</h2>
-            <input type="text" id="name" placeholder="Name">
-            <input type="number" id="age" placeholder="Age">
-            <label for="fitness-goal">Select Your Fitness Goal:</label>
-            <select id="fitness-goal">
-                <option value="lose-weight">Lose Weight</option>
-                <option value="build-muscle">Build Muscle</option>
-                <option value="top-leaderboard">Top the Leaderboard</option>
-                <option value="be-healthier">Be Healthier</option>
-            </select>
-            <button class="onboarding-button" onclick="nextScreen('feature-overview')">Next</button>
-        </div>
-    </div>
+        <h3>Set Up Your Profile</h3>
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Full Name">
 
-    <!-- Login Section for Returning Members -->
-    <div id="login-section" class="login-container" style="display: none;">
-        <h2>Welcome Back!</h2>
-        <p>Please log in to access your account.</p>
-        <input type="text" id="login-username" placeholder="Username">
-        <input type="password" id="login-password" placeholder="Password">
-        <button onclick="login()">Login</button>
+        <label for="age">Age</label>
+        <input type="number" id="age" placeholder="Age">
+
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Create a Username">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Email Address">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Create a Password">
+
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" placeholder="Confirm Password">
+
+        <label for="fitness-goal">Select Your Fitness Goal</label>
+        <select id="fitness-goal">
+            <option value="lose-weight">Lose Weight</option>
+            <option value="build-muscle">Build Muscle</option>
+            <option value="top-leaderboard">Top the Leaderboard</option>
+            <option value="be-healthier">Be Healthier</option>
+        </select>
+
+        <button class="onboarding-button" onclick="signUp()">Create Account</button>
     </div>
 
     <!-- Footer -->

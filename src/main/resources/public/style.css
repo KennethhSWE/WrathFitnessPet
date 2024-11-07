@@ -5,7 +5,7 @@
     --primary-color: #FF6347; /* Heroic orange-red */
     --secondary-color: #20B2AA; /* Teal accent */
     --background-color: #1f1f1f; /* Darker background for immersive feel */
-    --card-background: #333;
+    --card-background: rgba(51, 51, 51, 0.85); /* Semi-transparent */
     --text-color: #f0f0f0;
     --accent-color: #FFD700; /* Gold for highlights */
     --button-background: #ff4500;
@@ -35,7 +35,7 @@ body {
 /* Font Styles */
 h1 {
     font-family: 'Cinzel', serif;
-    font-size: 2em;
+    font-size: 2.2em; /* Slightly larger font */
     font-weight: 700;
     color: var(--primary-color);
     text-align: center;
@@ -43,11 +43,18 @@ h1 {
 
 h2 {
     font-family: 'Cinzel', serif;
-    font-size: 1.5em;
+    font-size: 1.8em;
     font-weight: 600;
     color: var(--accent-color);
     margin-bottom: 10px;
     text-align: center;
+}
+
+h3 {
+    font-size: 1.3em;
+    color: var(--accent-color);
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 /* Header */
@@ -61,7 +68,7 @@ header {
 }
 
 .logo {
-    height: 70px; /* Scale down the logo */
+    height: 90px; /* Slightly larger logo */
     width: auto;
     margin-bottom: 10px;
 }
@@ -82,9 +89,9 @@ header nav a:hover {
     color: var(--accent-color);
 }
 
-/* Sign-Up and Login Container Styling */
-.onboarding-container, .login-container {
-    background-color: rgba(51, 51, 51, 0.9); /* Slight transparency */
+/* Registration Container Styling */
+.registration-container {
+    background-color: var(--card-background);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
@@ -92,15 +99,6 @@ header nav a:hover {
     max-width: 400px;
     margin: 0 auto;
     text-align: center;
-}
-
-/* Onboarding Sections */
-.onboarding-screen, .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 15px;
 }
 
 /* Input and Button Styles */
@@ -124,31 +122,22 @@ button, .onboarding-button {
     font-weight: bold;
     width: 80%;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 button:hover, .onboarding-button:hover {
     background-color: var(--button-hover);
-}
-
-/* Avatar Preview Section */
-.avatar-preview {
-    background-color: var(--card-background);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    margin-top: 20px;
-    color: var(--accent-color);
+    transform: scale(1.02);
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .onboarding-container, .login-container {
+    .registration-container {
         width: 90%;
         padding: 20px;
     }
 
     .logo {
-        height: 50px;
+        height: 70px;
     }
 }
