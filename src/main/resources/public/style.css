@@ -1,4 +1,4 @@
-/* style.css additional adjustments */
+/* style.css */
 
 /* Color Scheme */
 :root {
@@ -40,6 +40,7 @@ h1 {
     font-weight: 700;
     color: var(--primary-color);
     text-align: center;
+    margin-bottom: 10px;
 }
 
 h2 {
@@ -56,6 +57,7 @@ h3 {
     color: var(--accent-color);
     margin-top: 20px;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 /* Header */
@@ -93,7 +95,7 @@ header nav a:hover {
 /* Registration Container Styling */
 .registration-container {
     background-color: var(--card-background);
-    padding: 30px;
+    padding: 25px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
     width: 100%;
@@ -102,17 +104,26 @@ header nav a:hover {
     text-align: center;
 }
 
-/* Input and Button Styles */
+/* Label and Input Styles */
+label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    margin: 15px 0 5px 10%;
+    font-size: 1em;
+}
+
 input, select {
     width: 80%;
     padding: 12px;
-    margin: 10px 0;
+    margin-bottom: 10px;
     border-radius: 5px;
     border: none;
     background-color: #444;
     color: var(--text-color);
 }
 
+/* Button Styles */
 button, .onboarding-button {
     background-color: var(--button-background);
     color: white;
@@ -136,6 +147,8 @@ button:hover, .onboarding-button:hover {
     color: var(--error-color);
     font-size: 0.9em;
     margin-top: -8px;
+    text-align: left;
+    margin-left: 10%;
 }
 
 /* Mobile Responsiveness */
