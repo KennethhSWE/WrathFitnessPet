@@ -22,14 +22,13 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--background-color);
-    background-image: url('path/to/subtle-pattern.png'); /* Optional subtle background pattern */
     color: var(--text-color);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    padding-top: 30px;
     min-height: 100vh;
-    margin: 0;
-    padding: 20px;
     background-size: cover;
 }
 
@@ -56,17 +55,13 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: 800px;
-    background-color: var(--card-background);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 30px;
 }
 
 .logo {
-    height: 80px; /* Larger logo for better visibility */
+    height: 70px; /* Scale down the logo */
     width: auto;
     margin-bottom: 10px;
 }
@@ -89,33 +84,23 @@ header nav a:hover {
 
 /* Sign-Up and Login Container Styling */
 .onboarding-container, .login-container {
-    background-color: var(--card-background);
+    background-color: rgba(51, 51, 51, 0.9); /* Slight transparency */
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    margin-top: 20px;
-    text-align: center;
+    width: 100%;
     max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
 }
 
-/* Responsive Styling */
-@media (max-width: 768px) {
-    header, .container, .onboarding-container, .login-container {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .logo {
-        height: 60px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    h2 {
-        font-size: 1.2em;
-    }
+/* Onboarding Sections */
+.onboarding-screen, .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
 }
 
 /* Input and Button Styles */
@@ -129,7 +114,7 @@ input, select {
     color: var(--text-color);
 }
 
-button {
+button, .onboarding-button {
     background-color: var(--button-background);
     color: white;
     padding: 12px 24px;
@@ -137,16 +122,13 @@ button {
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    width: 80%;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover, .onboarding-button:hover {
     background-color: var(--button-hover);
-}
-
-/* Hide Avatar Preview Initially */
-#avatar-preview {
-    display: none;
 }
 
 /* Avatar Preview Section */
@@ -159,68 +141,14 @@ button:hover {
     color: var(--accent-color);
 }
 
-.avatar-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    margin-top: 15px;
-}
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .onboarding-container, .login-container {
+        width: 90%;
+        padding: 20px;
+    }
 
-.avatar-image {
-    background-color: #555;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-color);
-    font-weight: bold;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.stats {
-    width: 60%;
-}
-
-.stat {
-    margin-bottom: 10px;
-}
-
-.stat label {
-    font-weight: bold;
-}
-
-.stat-bar {
-    background-color: #444;
-    border-radius: 5px;
-    height: 10px;
-    width: 100%;
-    margin-top: 5px;
-    position: relative;
-}
-
-.stat-fill {
-    background-color: var(--primary-color);
-    height: 100%;
-    border-radius: 5px;
-    background-image: linear-gradient(90deg, var(--primary-color), var(--button-hover));
-    box-shadow: 0px 0px 5px rgba(255, 99, 71, 0.6); /* Soft glow effect */
-}
-
-/* Footer */
-footer {
-    color: var(--text-color);
-    text-align: center;
-    margin-top: 20px;
-}
-
-/* Adjusting spacing between sections for better readability */
-.onboarding-screen, #login-section, .avatar-preview {
-    margin-bottom: 20px;
-}
-
-/* Button alignment in Onboarding */
-.onboarding-button {
-    margin-top: 15px;
+    .logo {
+        height: 50px;
+    }
 }
