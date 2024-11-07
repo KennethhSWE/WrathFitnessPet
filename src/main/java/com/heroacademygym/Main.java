@@ -29,7 +29,7 @@ public class Main {
 
         ipAddress("0.0.0.0");
 
-        staticFiles.location("/frontend");
+        staticFiles.location("/public");
 
         System.out.println("Serving static files from /frontend");
 
@@ -46,7 +46,7 @@ public class Main {
             return null;
         });
 
-        
+
         post("/workout", (req, res) -> {
             String userIdStr = req.session().attribute("userId");
             if (isNullOrEmpty(userIdStr)) {
