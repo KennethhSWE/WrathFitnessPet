@@ -6,11 +6,11 @@
     <title>Hero Academy Gym</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap">
-
 </head>
 <body>
     <!-- Header Section -->
     <header>
+        <img src="assets/logos/200x300_GymLogo.png" alt="Hero Academy Gym Logo" class="logo">
         <h1>Hero Academy Gym</h1>
         <nav>
             <a href="#">Dashboard</a>
@@ -23,26 +23,26 @@
     <div id="onboarding-container" class="onboarding-container">
         <!-- Welcome Screen -->
         <div id="welcome-screen" class="onboarding-screen onboarding-active">
+            <img src="assets/logos/600x800_GymLogo.png" alt="Hero Academy Gym Logo" class="welcome-logo">
             <h2>Welcome to Hero Academy Gym!</h2>
             <p>We're here to help you achieve your fitness goals and have fun doing it!</p>
             <button class="onboarding-button" onclick="nextScreen('profile-setup')">Get Started</button>
         </div>
 
         <!-- Profile Setup Screen -->
-    <div id="profile-setup" class="onboarding-screen">
-        <h2>Set Up Your Profile</h2>
-        <input type="text" id="name" placeholder="Name">
-        <input type="number" id="age" placeholder="Age">
-        <label for="fitness-goal">Select Your Fitness Goal:</label>
-        <select id="fitness-goal">
-        <option value="lose-weight">Lose Weight</option>
-        <option value="build-muscle">Build Muscle</option>
-        <option value="top-leaderboard">Top the Leaderboard</option>
-        <option value="be-healthier">Be Healthier</option>
-        </select>
-        <button class="onboarding-button" onclick="nextScreen('feature-overview')">Next</button>
-    </div>
-
+        <div id="profile-setup" class="onboarding-screen">
+            <h2>Set Up Your Profile</h2>
+            <input type="text" id="name" placeholder="Name">
+            <input type="number" id="age" placeholder="Age">
+            <label for="fitness-goal">Select Your Fitness Goal:</label>
+            <select id="fitness-goal">
+                <option value="lose-weight">Lose Weight</option>
+                <option value="build-muscle">Build Muscle</option>
+                <option value="top-leaderboard">Top the Leaderboard</option>
+                <option value="be-healthier">Be Healthier</option>
+            </select>
+            <button class="onboarding-button" onclick="nextScreen('feature-overview')">Next</button>
+        </div>
 
         <!-- Feature Overview Screen -->
         <div id="feature-overview" class="onboarding-screen">
@@ -91,34 +91,33 @@
         <div id="avatar-preview" class="avatar-preview">
             <h2>Your Avatar</h2>
             <div class="avatar-container">
-        <!-- Placeholder for Avatar Image -->
-        <div class="avatar-image">
-            <p>Avatar Image</p> <!-- Placeholder; can be replaced with an actual image later -->
+                <!-- Placeholder for Avatar Image -->
+                <div class="avatar-image">
+                    <p>Avatar Image</p> <!-- Placeholder; can be replaced with an actual image later -->
+                </div>
+                <!-- Stats Bars -->
+                <div class="stats">
+                    <div class="stat">
+                        <label>Health:</label>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <label>Strength:</label>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <label>Stamina:</label>
+                        <div class="stat-bar">
+                            <div class="stat-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Stats Bars -->
-        <div class="stats">
-            <div class="stat">
-                <label>Health:</label>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 80%;"></div>
-                </div>
-            </div>
-            <div class="stat">
-                <label>Strength:</label>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 65%;"></div>
-                </div>
-            </div>
-            <div class="stat">
-                <label>Stamina:</label>
-                <div class="stat-bar">
-                    <div class="stat-fill" style="width: 50%;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 
         <!-- Avatar Stats Section -->
         <div id="avatar-section" style="display:none;">
