@@ -31,6 +31,8 @@ public class Main {
 
         staticFiles.location("/frontend");
 
+        System.out.println("Serving static files from /frontend");
+
         mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
         signUpCodeCollection = database.getCollection("SignUpCodes");
