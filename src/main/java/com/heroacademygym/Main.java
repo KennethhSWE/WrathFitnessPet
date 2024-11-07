@@ -45,8 +45,8 @@ public class Main {
 
         // Add this temporary route to access the index.html file in the frontend folder Remove AFTER TEST!
         get("/frontend", (req, res) -> {
-            res.redirect("/frontend/index.html");
-            return null;
+            res.type("text/html");
+            return "<html><body><hi>Directly serving content from frontend/index.html as a test</h1></body></html>";
         });
 
         get("/index.html", (req, res) -> {
