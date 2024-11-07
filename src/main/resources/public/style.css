@@ -1,0 +1,45 @@
+/* style.css */
+
+/* Color Scheme */
+:root {
+    --primary-color: #FF6347; /* Adjust this for a professional shade */
+    --secondary-color: #20B2AA; /* Compliments primary color */
+    --background-color: #f4f4f9;
+    --text-color: #333;
+    --accent-color: #FFD700; /* Optional highlight color */
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color);
+}
+
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+/* Container for content centering */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    margin: auto;
+}

@@ -4,37 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hero Academy Gym</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Hero Academy Gym</h1>
+    <!-- Header Section -->
+    <header>
+        <h1>Hero Academy Gym</h1>
+        <nav>
+            <a href="#">Dashboard</a>
+            <a href="#">Profile</a>
+            <a href="#">Settings</a>
+        </nav>
+    </header>
 
-    <!-- Login Section -->
-    <div id="login-section">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <p id="login-message"></p>
-    </div>
+    <!-- Main Content Section -->
+    <main class="container">
+        <!-- Login Section -->
+        <div id="login-section">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <p id="login-message"></p>
+        </div>
 
-    <!-- Workout Section -->
-    <div id="workout-section" style="display:none;">
-        <h2>Log Workout</h2>
-        <input type="number" id="weight" placeholder="Weight">
-        <input type="number" id="reps" placeholder="Reps">
-        <input type="checkbox" id="dailyGoal"> Hit Daily Goal
-        <input type="checkbox" id="streakBonus"> Hit Streak Bonus
-        <button onclick="logWorkout()">Log Workout</button>
-        <p id="workout-message"></p>
-    </div>
+        <!-- Workout Section -->
+        <div id="workout-section" style="display:none;">
+            <h2>Log Workout</h2>
+            <input type="number" id="weight" placeholder="Weight">
+            <input type="number" id="reps" placeholder="Reps">
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="dailyGoal"> Hit Daily Goal
+                </label>
+                <label>
+                    <input type="checkbox" id="streakBonus"> Hit Streak Bonus
+                </label>
+            </div>
+            <button onclick="logWorkout()">Log Workout</button>
+            <p id="workout-message"></p>
+        </div>
 
-    <!-- Avatar Stats Section -->
-    <div id="avatar-section" style="display:none;">
-        <h2>Avatar Stats</h2>
-        <button onclick="viewAvatar()">View Avatar Stats</button>
-        <p id="avatar-stats"></p>
-    </div>
+        <!-- Avatar Stats Section -->
+        <div id="avatar-section" style="display:none;">
+            <h2>Avatar Stats</h2>
+            <button onclick="viewAvatar()">View Avatar Stats</button>
+            <p id="avatar-stats"></p>
+        </div>
+    </main>
 
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Hero Academy Gym. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
     <script src="app.js"></script>
 </body>
 </html>
