@@ -56,6 +56,18 @@ public class Avatar {
         System.out.println(name + " is now wearing " + outfitChoice);
     }
 
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
+    }
+
+    public void setCardioHealth(int cardioHealth) {
+        this.cardioHealth = cardioHealth;
+    }
+
     // Getters for avatar stats
     public int getStrength() { return strength; }
     public int getStamina() { return stamina; }

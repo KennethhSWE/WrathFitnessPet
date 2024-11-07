@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Date;
 import static spark.Spark.*;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
@@ -41,7 +42,7 @@ public class Main {
         post("/workout", (req, res) -> {
             String userIdStr = req.session().attribute("userId");
             if (isNullOrEmpty(userIdStr)) {
-                return "Please log in to log a workout."
+                return "Please log in to log a workout.";
             }
 
             ObjectId userId = new ObjectId(userIdStr);
