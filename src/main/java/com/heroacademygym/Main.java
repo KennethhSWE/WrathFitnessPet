@@ -41,21 +41,12 @@ public class Main {
 
         System.out.println("Welcome to Hero Academy Gym!");
 
-        get("/", (req, res) -> "Welcome to Hero Academy Gym");
-
-        // Add this temporary route to access the index.html file in the frontend folder Remove AFTER TEST!
-        get("/frontend", (req, res) -> {
-            res.type("text/html");
-            return "<html><body><hi>Directly serving content from frontend/index.html as a test</h1></body></html>";
+        get("/", (req, res) -> {
+            res.redirect("/index.html");
+            return null;
         });
 
-        get("/index.html", (req, res) -> {
-            res.type("text/html");
-            return "<html><body><h1>Direct access to index.html file in frontend</h1></body></html>";
-        });
-
-
-
+        
         post("/workout", (req, res) -> {
             String userIdStr = req.session().attribute("userId");
             if (isNullOrEmpty(userIdStr)) {
