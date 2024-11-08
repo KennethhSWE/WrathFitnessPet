@@ -11,6 +11,8 @@
     --button-background: #ff4500;
     --button-hover: #ff6a00;
     --error-color: #FF6347; /* Red color for errors */
+    --progress-bar-bg: #444;
+    --progress-bar-fill: #FFD700; /* Gold for progress fill */
 }
 
 /* Basic Reset */
@@ -163,6 +165,26 @@ button, .onboarding-button {
 button:hover, .onboarding-button:hover {
     background-color: var(--button-hover);
     transform: scale(1.02);
+}
+
+/* Progress Tracking Styles */
+#progress-tracking {
+    text-align: center;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: var(--progress-bar-bg);
+    border-radius: 8px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: var(--progress-bar-fill);
+    border-radius: 8px 0 0 8px;
+    transition: width 0.4s ease-in-out;
 }
 
 /* Dashboard Sections */

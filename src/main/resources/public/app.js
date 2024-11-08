@@ -7,6 +7,7 @@ window.onload = async function() {
             document.getElementById('username-display').innerText = username;
             showDashboard();
             fetchWorkoutHistory(); // Load workout history on dashboard load
+            fetchProgress(); // Load progress tracking data on dashboard load
         } else {
             // If not logged in, show registration screen by default
             showRegistration();
@@ -29,13 +30,6 @@ function showLogin() {
     document.getElementById('registration-container').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
     document.getElementById('dashboard').style.display = 'none';
-
-    // Ensure all input fields are visible
-    const loginUsername = document.getElementById('login-username');
-    const loginPassword = document.getElementById('login-password');
-    if (!loginUsername || !loginPassword) {
-        console.error("Login fields missing. Please check the HTML structure.");
-    }
 }
 
 // Show the registration screen and hide other sections
@@ -43,16 +37,6 @@ function showRegistration() {
     document.getElementById('registration-container').style.display = 'block';
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('dashboard').style.display = 'none';
-
-    // Ensure all registration fields are visible
-    const registrationFields = [
-        'name', 'age', 'username', 'email', 'password', 'confirm-password', 'fitness-goal'
-    ];
-    registrationFields.forEach(field => {
-        if (!document.getElementById(field)) {
-            console.error(`Registration field '${field}' is missing. Please check the HTML structure.`);
-        }
-    });
 }
 
 // Sign-up function
@@ -115,6 +99,7 @@ async function login() {
             document.getElementById('username-display').innerText = username;
             showDashboard();
             fetchWorkoutHistory(); // Load workout history on login
+            fetchProgress(); // Load progress tracking data on login
         } else {
             const message = await response.text();
             document.getElementById('login-message').innerText = message;
@@ -158,6 +143,7 @@ async function logWorkout() {
         if (response.ok) {
             document.getElementById('workout-message').innerText = "Workout logged successfully!";
             fetchWorkoutHistory(); // Refresh workout history
+            fetchProgress(); // Refresh progress tracking after workout logging
         } else {
             document.getElementById('workout-message').innerText = "Failed to log workout. Try again.";
         }
@@ -190,4 +176,27 @@ async function fetchWorkoutHistory() {
         console.error("Error fetching workout history:", error);
         document.getElementById('workout-message').innerText = "An error occurred. Try again.";
     }
+}
+
+// Fetch progress tracking data and update progress bar
+async function fetchProgress() {
+    try {
+        const response = await fetch('/getProgress', { method: 'GET' });
+        if (response.ok) {
+            const progressData = await response.json();
+            updateProgressBar(progressData.currentXP, progressData.goalXP);
+        } else {
+            console.error("Error retrieving progress data.");
+        }
+    } catch (error) {
+        console.error("Error fetching progress data:", error);
+    }
+}
+
+// Update progress bar with current progress
+function updateProgressBar(currentXP, goalXP) {
+    const progressPercent = (currentXP / goalXP) * 100;
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.style.width = `${progressPercent}%`;
+    progressBar.innerText = `${Math.floor(progressPercent)}%`;
 }
