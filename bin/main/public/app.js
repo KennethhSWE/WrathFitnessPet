@@ -10,12 +10,12 @@ window.onload = async function() {
             document.getElementById('dashboard').style.display = 'block';
             fetchWorkoutHistory(); // Load workout history on dashboard load
         } else {
-            // If not logged in, show registration screen by default
-            showRegistration();
+            // If not logged in, show the login screen by default
+            showLogin();
         }
     } catch (error) {
         console.error("Error checking session:", error);
-        showRegistration();
+        showLogin(); // Fall back to login screen on error
     }
 };
 
