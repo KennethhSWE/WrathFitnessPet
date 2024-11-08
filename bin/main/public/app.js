@@ -16,7 +16,6 @@ async function signUp() {
         document.getElementById('password-error').innerText = ""; // Clear any previous error
     }
 
-    // Send data as form-urlencoded instead of JSON
     const response = await fetch('/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -31,8 +30,8 @@ async function signUp() {
     });
 
     if (response.ok) {
-        alert("Account created successfully! Please log in.");
-        showLogin(); // Redirect to login screen
+        alert("Account created successfully! Redirecting to login page.");
+        showLogin(); // Redirect to login screen immediately
     } else if (response.status === 409) {
         alert("Username already exists. Please choose a different one.");
     } else {
