@@ -33,12 +33,24 @@ body {
     justify-content: flex-start;
     padding: 20px;
     min-height: 100vh;
+    position: relative; 
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
 }
 
 /* Font Styles */
 h1 {
     font-family: 'Cinzel', serif;
-    font-size: 2.2em;
+    font-size: 2.5em;
     font-weight: 700;
     color: var(--primary-color);
     text-align: center;
@@ -71,7 +83,7 @@ header {
 }
 
 .logo {
-    height: 80px;
+    height: 250px;
     width: auto;
     margin-bottom: 10px;
 }
