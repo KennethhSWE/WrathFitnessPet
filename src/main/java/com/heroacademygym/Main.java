@@ -8,7 +8,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.google.gson.Gson;
@@ -53,6 +52,8 @@ public class Main {
                 String username = req.queryParams("username");
                 String password = req.queryParams("password");
 
+                System.out.println("Login attempt with username: " + username); // Debug log
+
                 if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
                     res.status(400);
                     return "Error: Username and password are required.";
@@ -62,7 +63,20 @@ public class Main {
                 password = password.trim();
 
                 Document userDoc = userCollection.find(Filters.eq("username", username)).first();
-                if (userDoc == null || !BCrypt.checkpw(password, userDoc.getString("password"))) {
+
+                // Check if the user document was found
+                if (userDoc == null) {
+                    System.out.println("User not found for username: " + username);
+                    res.status(401);
+                    return "Error: Invalid username or password.";
+                }
+
+                System.out.println("User found: " + userDoc.toJson()); // Debug log for user data
+
+                // Verify password using BCrypt
+                boolean passwordMatch = BCrypt.checkpw(password, userDoc.getString("password"));
+                if (!passwordMatch) {
+                    System.out.println("Invalid password for username: " + username);
                     res.status(401);
                     return "Error: Invalid username or password.";
                 }
@@ -70,6 +84,7 @@ public class Main {
                 // Create session
                 ObjectId userId = userDoc.getObjectId("_id");
                 req.session(true).attribute("userId", userId.toHexString());
+                System.out.println("Login successful for user " + username);
                 return "Login successful for user " + username;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -172,12 +187,23 @@ public class Main {
     }
 
     private static void saveUser(User user) {
-        Document doc = new Document("username", user.getUsername())
-            .append("password", user.getPassword())
-            .append("strength", user.getAvatar().getStrength())
-            .append("stamina", user.getAvatar().getStamina())
-            .append("cardioHealth", user.getAvatar().getCardioHealth());
+        // Check if a user with the same username already exists
+        Document existingUser = userCollection.find(Filters.eq("username", user.getUsername())).first();
 
-        userCollection.replaceOne(Filters.eq("_id", user.getId()), doc, new ReplaceOptions().upsert(true));
+        if (existingUser != null) {
+            System.out.println("User with username " + user.getUsername() + " already exists.");
+            return; // Exit the function to avoid overwriting the existing user
+        }
+
+        // Create a new document for the user with unique fields
+        Document doc = new Document("username", user.getUsername())
+                .append("password", user.getPassword())
+                .append("strength", user.getAvatar().getStrength())
+                .append("stamina", user.getAvatar().getStamina())
+                .append("cardioHealth", user.getAvatar().getCardioHealth());
+
+        // Insert the new user document into the database
+        userCollection.insertOne(doc);
+        System.out.println("New user " + user.getUsername() + " added successfully.");
     }
 }
