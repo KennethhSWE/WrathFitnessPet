@@ -5,19 +5,55 @@ window.onload = async function() {
         if (response.ok) {
             const username = await response.text();
             document.getElementById('username-display').innerText = username;
-            document.getElementById('registration-container').style.display = 'none';
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+            showDashboard();
             fetchWorkoutHistory(); // Load workout history on dashboard load
         } else {
-            // If not logged in, show the login screen by default
-            showLogin();
+            // If not logged in, show registration screen by default
+            showRegistration();
         }
     } catch (error) {
         console.error("Error checking session:", error);
-        showLogin(); // Fall back to login screen on error
+        showRegistration();
     }
 };
+
+// Show the dashboard and hide other sections
+function showDashboard() {
+    document.getElementById('registration-container').style.display = 'none';
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+}
+
+// Show the login screen and hide other sections
+function showLogin() {
+    document.getElementById('registration-container').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+    document.getElementById('dashboard').style.display = 'none';
+
+    // Ensure all input fields are visible
+    const loginUsername = document.getElementById('login-username');
+    const loginPassword = document.getElementById('login-password');
+    if (!loginUsername || !loginPassword) {
+        console.error("Login fields missing. Please check the HTML structure.");
+    }
+}
+
+// Show the registration screen and hide other sections
+function showRegistration() {
+    document.getElementById('registration-container').style.display = 'block';
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+
+    // Ensure all registration fields are visible
+    const registrationFields = [
+        'name', 'age', 'username', 'email', 'password', 'confirm-password', 'fitness-goal'
+    ];
+    registrationFields.forEach(field => {
+        if (!document.getElementById(field)) {
+            console.error(`Registration field '${field}' is missing. Please check the HTML structure.`);
+        }
+    });
+}
 
 // Sign-up function
 async function signUp() {
@@ -77,8 +113,7 @@ async function login() {
 
         if (response.ok) {
             document.getElementById('username-display').innerText = username;
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+            showDashboard();
             fetchWorkoutHistory(); // Load workout history on login
         } else {
             const message = await response.text();
@@ -87,20 +122,6 @@ async function login() {
     } catch (error) {
         console.error("Error during login:", error);
     }
-}
-
-// Show login screen function
-function showLogin() {
-    document.getElementById('registration-container').style.display = 'none';
-    document.getElementById('login-section').style.display = 'block';
-    document.getElementById('dashboard').style.display = 'none';
-}
-
-// Show registration screen function
-function showRegistration() {
-    document.getElementById('registration-container').style.display = 'block';
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'none';
 }
 
 // Logout function
