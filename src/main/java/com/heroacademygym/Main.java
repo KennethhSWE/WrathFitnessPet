@@ -33,6 +33,7 @@ public class Main {
         staticFiles.location("/public");
 
         // Initialize mongoClient here
+        System.out.println("MongoDB URI: " + System.getenv("MONGO_DB_URI"));
         mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
         userCollection = database.getCollection("Users");
