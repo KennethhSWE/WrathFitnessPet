@@ -23,6 +23,9 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--background-color);
+    background-image: url("assets/Backgrounds/HeroAcademy_BackGroud.png");
+    background-size: 600px 600px; /* Matches the image size */
+    background-repeat: repeat;
     color: var(--text-color);
     display: flex;
     flex-direction: column;

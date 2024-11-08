@@ -1,13 +1,21 @@
 // Check if user is already logged in on page load
 window.onload = async function() {
-    const response = await fetch('/check-session', { method: 'GET' });
-    if (response.ok) {
-        const username = await response.text();
-        document.getElementById('username-display').innerText = username;
-        document.getElementById('registration-container').style.display = 'none';
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        fetchWorkoutHistory(); // Load workout history on dashboard load
+    try {
+        const response = await fetch('/check-session', { method: 'GET' });
+        if (response.ok) {
+            const username = await response.text();
+            document.getElementById('username-display').innerText = username;
+            document.getElementById('registration-container').style.display = 'none';
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            fetchWorkoutHistory(); // Load workout history on dashboard load
+        } else {
+            // If not logged in, show registration screen by default
+            showRegistration();
+        }
+    } catch (error) {
+        console.error("Error checking session:", error);
+        showRegistration();
     }
 };
 
@@ -60,20 +68,24 @@ async function login() {
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
-    const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ username, password })
-    });
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ username, password })
+        });
 
-    if (response.ok) {
-        document.getElementById('username-display').innerText = username;
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        fetchWorkoutHistory(); // Load workout history on login
-    } else {
-        const message = await response.text();
-        document.getElementById('login-message').innerText = message;
+        if (response.ok) {
+            document.getElementById('username-display').innerText = username;
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            fetchWorkoutHistory(); // Load workout history on login
+        } else {
+            const message = await response.text();
+            document.getElementById('login-message').innerText = message;
+        }
+    } catch (error) {
+        console.error("Error during login:", error);
     }
 }
 
@@ -81,6 +93,14 @@ async function login() {
 function showLogin() {
     document.getElementById('registration-container').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
+    document.getElementById('dashboard').style.display = 'none';
+}
+
+// Show registration screen function
+function showRegistration() {
+    document.getElementById('registration-container').style.display = 'block';
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
 }
 
 // Logout function
@@ -88,8 +108,7 @@ async function logout() {
     const response = await fetch('/logout', { method: 'POST' });
     if (response.ok) {
         alert("You have been logged out.");
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('login-section').style.display = 'block';
+        showLogin();
     } else {
         alert("Logout failed, please try again.");
     }
