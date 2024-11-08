@@ -1,6 +1,8 @@
 package com.heroacademygym;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import static spark.Spark.*;
 import com.heroacademygym.models.User;
 import com.mongodb.client.MongoClients;
@@ -9,31 +11,29 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
-    private static MongoClient mongoClient; // Class-level declaration for mongoClient
+    private static MongoClient mongoClient;
     private static MongoCollection<Document> userCollection;
     private static MongoCollection<Document> workoutCollection;
     private static Gson gson = new Gson();
 
     public static void main(String[] args) {
-        // Configure port and MongoDB connection
         String portEnv = System.getenv("PORT");
         if (!isNullOrEmpty(portEnv)) {
             port(Integer.parseInt(portEnv));
         } else {
-            port(8080); // Default port for local testing
+            port(8080);
         }
 
         ipAddress("0.0.0.0");
         staticFiles.location("/public");
 
-        // Initialize mongoClient here
-        System.out.println("MongoDB URI: " + System.getenv("MONGO_DB_URI"));
         mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
         userCollection = database.getCollection("Users");
@@ -62,9 +62,6 @@ public class Main {
                     return "Error: Username and password are required.";
                 }
 
-                username = username.trim();
-                password = password.trim();
-
                 Document userDoc = userCollection.find(Filters.eq("username", username)).first();
                 if (userDoc == null || !BCrypt.checkpw(password, userDoc.getString("password"))) {
                     res.status(401);
@@ -88,16 +85,10 @@ public class Main {
                 String username = req.queryParams("username");
                 String password = req.queryParams("password");
 
-                System.out.println("Username: " + username);
-                System.out.println("Password: " + password);
-
                 if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
                     res.status(400);
                     return "Error: Username and password are required.";
                 }
-
-                username = username.trim();
-                password = password.trim();
 
                 if (userCollection.find(Filters.eq("username", username)).first() != null) {
                     res.status(409);
@@ -105,15 +96,10 @@ public class Main {
                 }
 
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
                 User newUser = new User(username, hashedPassword);
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                res.status(400);
-                return "Error: Missing required fields.";
             } catch (Exception e) {
                 e.printStackTrace();
                 res.status(500);
@@ -127,29 +113,72 @@ public class Main {
             return "You have been logged out.";
         });
 
-        // GET AVATAR STATS ENDPOINT
-        get("/getAvatar", (req, res) -> {
-            try {
-                String userIdStr = req.session().attribute("userId");
-                if (isNullOrEmpty(userIdStr)) {
-                    res.status(401);
-                    return "Unauthorized";
-                }
+        // CHECK SESSION ENDPOINT
+        get("/check-session", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                res.status(401);
+                return "Unauthorized";
+            }
+            Document userDoc = userCollection.find(Filters.eq("_id", new ObjectId(userIdStr))).first();
+            if (userDoc == null) {
+                res.status(404);
+                return "User not found";
+            }
+            return userDoc.getString("username");
+        });
 
+        // LOG WORKOUT ENDPOINT
+        post("/logWorkout", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                res.status(401);
+                return "Unauthorized";
+            }
+
+            try {
                 ObjectId userId = new ObjectId(userIdStr);
-                Document userDoc = userCollection.find(Filters.eq("_id", userId)).first();
-                if (userDoc != null) {
-                    User user = gson.fromJson(userDoc.toJson(), User.class);
-                    res.type("application/json");
-                    return gson.toJson(user.getAvatar());
-                } else {
-                    res.status(404);
-                    return "User not found";
-                }
+                double weight = Double.parseDouble(req.queryParams("weight"));
+                int reps = Integer.parseInt(req.queryParams("reps"));
+                boolean dailyGoal = Boolean.parseBoolean(req.queryParams("dailyGoal"));
+                boolean streakBonus = Boolean.parseBoolean(req.queryParams("streakBonus"));
+
+                Document workout = new Document("userId", userId)
+                    .append("timestamp", new Date())
+                    .append("weight", weight)
+                    .append("reps", reps)
+                    .append("dailyGoal", dailyGoal)
+                    .append("streakBonus", streakBonus);
+
+                workoutCollection.insertOne(workout);
+                return "Workout logged successfully!";
             } catch (Exception e) {
                 e.printStackTrace();
                 res.status(500);
-                return "Server error while retrieving avatar stats.";
+                return "Error logging workout.";
+            }
+        });
+
+        // GET WORKOUT HISTORY ENDPOINT
+        get("/getWorkoutHistory", (req, res) -> {
+            String userIdStr = req.session().attribute("userId");
+            if (isNullOrEmpty(userIdStr)) {
+                res.status(401);
+                return "Unauthorized";
+            }
+
+            try {
+                ObjectId userId = new ObjectId(userIdStr);
+                List<Document> workouts = workoutCollection.find(Filters.eq("userId", userId))
+                    .sort(Sorts.descending("timestamp"))
+                    .into(new ArrayList<>());
+
+                res.type("application/json");
+                return gson.toJson(workouts);
+            } catch (Exception e) {
+                e.printStackTrace();
+                res.status(500);
+                return "Error retrieving workout history.";
             }
         });
     }
@@ -157,17 +186,6 @@ public class Main {
     // Utility Methods
     public static boolean isNullOrEmpty(String value) {
         return value == null || value.trim().isEmpty();
-    }
-
-    private static User getUserById(ObjectId userId) {
-        Document doc = userCollection.find(Filters.eq("_id", userId)).first();
-        if (doc == null) return null;
-
-        User user = new User(doc.getString("username"), doc.getString("password"));
-        user.getAvatar().setStrength(doc.getInteger("strength"));
-        user.getAvatar().setStamina(doc.getInteger("stamina"));
-        user.getAvatar().setCardioHealth(doc.getInteger("cardioHealth"));
-        return user;
     }
 
     private static void saveUser(User user) {
