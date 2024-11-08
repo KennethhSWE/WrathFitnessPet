@@ -12,7 +12,6 @@
     <header>
         <img src="assets/logos/200x300_GymLogo.png" alt="Hero Academy Gym Logo" class="logo">
         <h1>Hero Academy Gym</h1>
-        <!-- Navigation hidden for new users in the registration phase -->
         <nav id="nav-links" style="display: none;">
             <a href="#">Dashboard</a>
             <a href="#">Profile</a>
@@ -26,25 +25,24 @@
         <p>Join us and start your journey to a stronger you!</p>
 
         <h3>Set Up Your Profile</h3>
-        
         <label for="name">Full Name</label>
         <input type="text" id="name" placeholder="Name">
-
+        
         <label for="age">Age</label>
         <input type="number" id="age" placeholder="Age">
-
+        
         <label for="username">Username</label>
         <input type="text" id="username" placeholder="Username">
-
+        
         <label for="email">Email</label>
         <input type="email" id="email" placeholder="Email">
-
+        
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="Password">
-
+        
         <label for="confirm-password">Confirm Password</label>
         <input type="password" id="confirm-password" placeholder="Confirm Password">
-        <p id="password-error" class="error-message"></p> <!-- In-line error message -->
+        <p id="password-error" class="error-message"></p>
 
         <label for="fitness-goal">Select Your Fitness Goal</label>
         <select id="fitness-goal">
@@ -55,6 +53,19 @@
         </select>
 
         <button class="onboarding-button" onclick="signUp()">Create Account</button>
+    </div>
+
+    <!-- Login Section -->
+    <div id="login-section" style="display: none;">
+        <h2>Login</h2>
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Username">
+        
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Password">
+        
+        <button onclick="login()">Log In</button>
+        <p id="login-message"></p>
     </div>
 
     <!-- Main Dashboard -->
@@ -77,27 +88,25 @@
         <div id="workout-section">
             <h3>Log Your Workout</h3>
             <label for="weight">Weight (lbs):</label>
-            <input type="number" id="weight" placeholder="Enter weight used" />
-
+            <input type="number" id="weight" placeholder="Enter weight used">
+            
             <label for="reps">Reps:</label>
-            <input type="number" id="reps" placeholder="Enter reps" />
-
+            <input type="number" id="reps" placeholder="Enter reps">
+            
             <label for="dailyGoal">Hit Daily Goal:</label>
-            <input type="checkbox" id="dailyGoal" />
-
+            <input type="checkbox" id="dailyGoal">
+            
             <label for="streakBonus">Hit Streak Bonus:</label>
-            <input type="checkbox" id="streakBonus" />
-
+            <input type="checkbox" id="streakBonus">
+            
             <button onclick="logWorkout()">Submit Workout</button>
-            <p id="workout-message"></p> <!-- Feedback message -->
+            <p id="workout-message"></p>
         </div>
 
         <!-- Workout History Section -->
         <div id="workout-history-section">
             <h3>Workout History</h3>
-            <div id="workout-history">
-                <!-- Past workouts will be dynamically inserted here -->
-            </div>
+            <div id="workout-history"></div>
         </div>
 
         <!-- Avatar Customization Section -->
@@ -113,12 +122,10 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2024 Hero Academy Gym. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript -->
     <script src="app.js"></script>
 </body>
 </html>
