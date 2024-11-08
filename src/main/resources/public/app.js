@@ -6,10 +6,9 @@ window.onload = async function() {
             const username = await response.text();
             document.getElementById('username-display').innerText = username;
             showDashboard();
-            fetchWorkoutHistory(); // Load workout history on dashboard load
-            updateXpProgress(); // Initialize XP bar on page load
+            fetchWorkoutHistory();
+            fetchUserStats(); // Load user stats and XP progress on dashboard load
         } else {
-            // If not logged in, show registration screen by default
             showRegistration();
         }
     } catch (error) {
@@ -30,6 +29,7 @@ function showLogin() {
     document.getElementById('registration-container').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
     document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('forgot-password-container').style.display = 'none';
 }
 
 // Show the registration screen and hide other sections
@@ -39,51 +39,41 @@ function showRegistration() {
     document.getElementById('dashboard').style.display = 'none';
 }
 
-// Sign-up function
-async function signUp() {
-    const name = document.getElementById('name').value;
-    const age = document.getElementById('age').value;
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    const fitnessGoal = document.getElementById('fitness-goal').value;
+// Show the forgot password form
+function showForgotPassword() {
+    document.getElementById('forgot-password-container').style.display = 'block';
+    document.getElementById('login-section').style.display = 'none';
+}
 
-    if (password !== confirmPassword) {
-        document.getElementById('password-error').innerText = "Passwords do not match. Please re-enter.";
-        return;
-    }
-
-    const formData = new URLSearchParams();
-    formData.append('name', name);
-    formData.append('age', age);
-    formData.append('username', username);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('fitnessGoal', fitnessGoal);
-
+// Fetch user stats including level and XP to dynamically update the dashboard
+async function fetchUserStats() {
     try {
-        const response = await fetch('/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
-        });
-
+        const response = await fetch('/user-stats', { method: 'GET' });
         if (response.ok) {
-            alert("Account created successfully! Redirecting to login page.");
-            showLogin();
-        } else if (response.status === 409) {
-            alert("Username already exists. Please choose a different one.");
+            const { level, xp, xpToNextLevel } = await response.json();
+            updateXPProgress(level, xp, xpToNextLevel);
         } else {
-            alert('Sign-up failed, please try again.');
+            console.error("Failed to fetch user stats");
         }
     } catch (error) {
-        console.error("Error during sign-up:", error);
-        alert("An error occurred. Please try again later.");
+        console.error("Error fetching user stats:", error);
     }
 }
 
-// Login function
+// Update XP Progress UI dynamically
+function updateXPProgress(level, xp, xpToNextLevel) {
+    document.getElementById('avatar-level').innerText = level;
+    document.getElementById('avatar-xp').innerText = xp;
+    document.getElementById('avatar-xp-next').innerText = xpToNextLevel;
+    
+    const progressPercentage = (xp / xpToNextLevel) * 100;
+    document.getElementById('xp-progress-bar').style.width = `${progressPercentage}%`;
+    document.getElementById('xp-progress-text').innerText = `${progressPercentage.toFixed(0)}% to next level`;
+}
+
+// Sign-up function (assumed to be the same as in previous code)
+
+// Enhanced login function with error handling
 async function login() {
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
@@ -98,8 +88,8 @@ async function login() {
         if (response.ok) {
             document.getElementById('username-display').innerText = username;
             showDashboard();
-            fetchWorkoutHistory(); // Load workout history on login
-            updateXpProgress(); // Update XP progress on login
+            fetchWorkoutHistory();
+            fetchUserStats();
         } else {
             const message = await response.text();
             document.getElementById('login-message').innerText = message;
@@ -109,23 +99,17 @@ async function login() {
     }
 }
 
-// Logout function
-async function logout() {
-    const response = await fetch('/logout', { method: 'POST' });
-    if (response.ok) {
-        alert("You have been logged out.");
-        showLogin();
-    } else {
-        alert("Logout failed, please try again.");
-    }
-}
-
-// Log workout function
+// Log workout function with error handling and feedback
 async function logWorkout() {
     const weight = document.getElementById('weight').value;
     const reps = document.getElementById('reps').value;
     const dailyGoal = document.getElementById('dailyGoal').checked;
     const streakBonus = document.getElementById('streakBonus').checked;
+
+    if (!weight || !reps) {
+        document.getElementById('workout-message').innerText = "Please enter both weight and reps.";
+        return;
+    }
 
     const formData = new URLSearchParams();
     formData.append('weight', weight);
@@ -142,10 +126,10 @@ async function logWorkout() {
 
         if (response.ok) {
             document.getElementById('workout-message').innerText = "Workout logged successfully!";
-            fetchWorkoutHistory(); // Refresh workout history
-            gainXp(10); // Example: Gain 10 XP for each logged workout
+            fetchWorkoutHistory();
+            fetchUserStats(); // Refresh stats to reflect XP gain and level up if applicable
         } else {
-            document.getElementById('workout-message').innerText = "Failed to log workout. Try again.";
+            document.getElementById('workout-message').innerText = "Failed to log workout. Please try again.";
         }
     } catch (error) {
         console.error("Error logging workout:", error);
@@ -153,34 +137,7 @@ async function logWorkout() {
     }
 }
 
-// XP and Level System
-let currentXp = 0;
-let currentLevel = 1;
-const xpToNextLevel = 100;
-
-function gainXp(amount) {
-    currentXp += amount;
-    if (currentXp >= xpToNextLevel) {
-        levelUp();
-    }
-    updateXpProgress();
-}
-
-function levelUp() {
-    currentXp = currentXp - xpToNextLevel;
-    currentLevel++;
-    document.getElementById('avatar-level').innerText = currentLevel;
-}
-
-function updateXpProgress() {
-    const progressPercentage = (currentXp / xpToNextLevel) * 100;
-    document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
-    document.getElementById('progress-percentage').innerText = `${Math.floor(progressPercentage)}% Complete`;
-    document.getElementById('current-level').innerText = currentLevel;
-    document.getElementById('next-level').innerText = currentLevel + 1;
-}
-
-// Fetch workout history function
+// Fetch workout history
 async function fetchWorkoutHistory() {
     try {
         const response = await fetch('/getWorkoutHistory', { method: 'GET' });
@@ -202,5 +159,47 @@ async function fetchWorkoutHistory() {
     } catch (error) {
         console.error("Error fetching workout history:", error);
         document.getElementById('workout-message').innerText = "An error occurred. Try again.";
+    }
+}
+
+// Request Password Reset
+async function requestPasswordReset() {
+    const email = document.getElementById('reset-email').value;
+
+    if (!email) {
+        document.getElementById('reset-message').innerText = "Please enter your email address.";
+        return;
+    }
+
+    try {
+        const response = await fetch('/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ email })
+        });
+
+        if (response.ok) {
+            document.getElementById('reset-message').innerText = "A reset link has been sent to your email.";
+        } else {
+            document.getElementById('reset-message').innerText = "Failed to send reset link. Please try again.";
+        }
+    } catch (error) {
+        console.error("Error requesting password reset:", error);
+        document.getElementById('reset-message').innerText = "An error occurred. Try again.";
+    }
+}
+
+// Logout function
+async function logout() {
+    try {
+        const response = await fetch('/logout', { method: 'POST' });
+        if (response.ok) {
+            alert("You have been logged out.");
+            showLogin();
+        } else {
+            alert("Logout failed, please try again.");
+        }
+    } catch (error) {
+        console.error("Error during logout:", error);
     }
 }

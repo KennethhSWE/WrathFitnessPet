@@ -75,6 +75,20 @@
             </div>
             <button onclick="login()">Log In</button>
             <p id="login-message" class="error-message"></p>
+
+            <!-- Forgot Password Link -->
+            <p class="forgot-password" onclick="showForgotPassword()">Forgot Password?</p>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-password-container" style="display: none;">
+                <h3>Reset Your Password</h3>
+                <div class="form-group">
+                    <label for="reset-email"><i class="fas fa-envelope"></i> Enter your email</label>
+                    <input type="email" id="reset-email" placeholder="Email">
+                </div>
+                <button onclick="requestPasswordReset()">Send Reset Link</button>
+                <p id="reset-message" class="message"></p>
+            </div>
         </div>
 
         <!-- Main Dashboard -->
