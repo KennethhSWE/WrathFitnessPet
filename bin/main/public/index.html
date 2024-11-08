@@ -88,8 +88,17 @@
                     <h3>Your Avatar</h3>
                     <p><strong>Name:</strong> <span id="avatar-name"></span></p>
                     <p><strong>Level:</strong> <span id="avatar-level">1</span></p>
-                    <p><strong>XP:</strong> <span id="avatar-xp">0</span></p>
-                    <p><strong>XP to Next Level:</strong> <span id="avatar-xp-next">100</span></p>
+                    
+                    <!-- XP Progress Bar -->
+                    <div class="xp-progress-container">
+                        <span id="current-level">1</span>
+                        <div class="xp-progress-bar-container">
+                            <div class="xp-progress-bar" id="xp-progress-bar"></div>
+                        </div>
+                        <span id="next-level">2</span>
+                    </div>
+                    <p><span id="xp-progress-text">0% to next level</span></p>
+                    
                     <p><strong>Strength:</strong> <span id="avatar-strength">50</span></p>
                     <p><strong>Stamina:</strong> <span id="avatar-stamina">50</span></p>
                     <p><strong>Cardio Health:</strong> <span id="avatar-cardio">50</span></p>
@@ -124,16 +133,6 @@
                     <div id="workout-history">
                         <!-- Past workouts will be dynamically inserted here -->
                     </div>
-                </div>
-
-                <!-- Progress Tracking Card -->
-                <div id="progress-tracking" class="dashboard-card">
-                    <h3>Goal Progress</h3>
-                    <p>Your goal: <span id="goal-type">Build Muscle</span></p>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
-                    </div>
-                    <p><span id="progress-percentage">0%</span> Complete</p>
                 </div>
             </div>
         </div>

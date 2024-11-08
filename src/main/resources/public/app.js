@@ -7,7 +7,7 @@ window.onload = async function() {
             document.getElementById('username-display').innerText = username;
             showDashboard();
             fetchWorkoutHistory(); // Load workout history on dashboard load
-            fetchProgress(); // Load progress tracking data on dashboard load
+            updateXpProgress(); // Initialize XP bar on page load
         } else {
             // If not logged in, show registration screen by default
             showRegistration();
@@ -99,7 +99,7 @@ async function login() {
             document.getElementById('username-display').innerText = username;
             showDashboard();
             fetchWorkoutHistory(); // Load workout history on login
-            fetchProgress(); // Load progress tracking data on login
+            updateXpProgress(); // Update XP progress on login
         } else {
             const message = await response.text();
             document.getElementById('login-message').innerText = message;
@@ -143,7 +143,7 @@ async function logWorkout() {
         if (response.ok) {
             document.getElementById('workout-message').innerText = "Workout logged successfully!";
             fetchWorkoutHistory(); // Refresh workout history
-            fetchProgress(); // Refresh progress tracking after workout logging
+            gainXp(10); // Example: Gain 10 XP for each logged workout
         } else {
             document.getElementById('workout-message').innerText = "Failed to log workout. Try again.";
         }
@@ -151,6 +151,33 @@ async function logWorkout() {
         console.error("Error logging workout:", error);
         document.getElementById('workout-message').innerText = "An error occurred. Try again.";
     }
+}
+
+// XP and Level System
+let currentXp = 0;
+let currentLevel = 1;
+const xpToNextLevel = 100;
+
+function gainXp(amount) {
+    currentXp += amount;
+    if (currentXp >= xpToNextLevel) {
+        levelUp();
+    }
+    updateXpProgress();
+}
+
+function levelUp() {
+    currentXp = currentXp - xpToNextLevel;
+    currentLevel++;
+    document.getElementById('avatar-level').innerText = currentLevel;
+}
+
+function updateXpProgress() {
+    const progressPercentage = (currentXp / xpToNextLevel) * 100;
+    document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+    document.getElementById('progress-percentage').innerText = `${Math.floor(progressPercentage)}% Complete`;
+    document.getElementById('current-level').innerText = currentLevel;
+    document.getElementById('next-level').innerText = currentLevel + 1;
 }
 
 // Fetch workout history function
@@ -176,27 +203,4 @@ async function fetchWorkoutHistory() {
         console.error("Error fetching workout history:", error);
         document.getElementById('workout-message').innerText = "An error occurred. Try again.";
     }
-}
-
-// Fetch progress tracking data and update progress bar
-async function fetchProgress() {
-    try {
-        const response = await fetch('/getProgress', { method: 'GET' });
-        if (response.ok) {
-            const progressData = await response.json();
-            updateProgressBar(progressData.currentXP, progressData.goalXP);
-        } else {
-            console.error("Error retrieving progress data.");
-        }
-    } catch (error) {
-        console.error("Error fetching progress data:", error);
-    }
-}
-
-// Update progress bar with current progress
-function updateProgressBar(currentXP, goalXP) {
-    const progressPercent = (currentXP / goalXP) * 100;
-    const progressBar = document.querySelector('.progress-bar');
-    progressBar.style.width = `${progressPercent}%`;
-    progressBar.innerText = `${Math.floor(progressPercent)}%`;
 }
