@@ -1,5 +1,3 @@
-/* style.css */
-
 /* Color Scheme */
 :root {
     --primary-color: #FF6347; /* Heroic orange-red */
@@ -22,18 +20,43 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: var(--background-color);
     color: var(--text-color);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 30px;
-    min-height: 100vh;
+    height: 100vh;
+    background: url('assets/bg/gym-background.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
-/* Font Styles */
+/* Background Overlay */
+.background-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Header */
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 30px;
+}
+
+.logo {
+    height: 90px;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+/* Typography */
 h1 {
     font-family: 'Cinzel', serif;
     font-size: 2.2em;
@@ -60,84 +83,53 @@ h3 {
     text-align: center;
 }
 
-/* Header */
-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding-top: 20px;
-    margin-bottom: 30px;
-}
-
-.logo {
-    height: 90px;
-    width: auto;
-    margin-bottom: 10px;
-}
-
-/* Navigation Links */
-header nav {
-    display: flex;
-    gap: 20px;
-}
-
-header nav a {
-    color: var(--secondary-color);
-    font-weight: bold;
-    text-decoration: none;
-}
-
-header nav a:hover {
-    color: var(--accent-color);
-}
-
-/* Registration Container Styling */
-.registration-container {
+/* Form Containers */
+.registration-container, .login-container, #dashboard {
     background-color: var(--card-background);
     padding: 25px;
     border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 400px;
-    margin: 0 auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
-/* Label and Input Styles */
-label {
-    display: block;
+/* Form Group */
+.form-group {
+    margin-bottom: 15px;
     text-align: left;
-    font-weight: bold;
-    margin: 15px 0 5px 10%;
-    font-size: 1em;
 }
 
-input, select {
-    width: 80%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: #444;
+.form-group label {
+    font-size: 0.9em;
+    display: block;
+    margin-bottom: 5px;
     color: var(--text-color);
 }
 
-/* Button Styles */
-button, .onboarding-button {
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #333;
+    color: var(--text-color);
+    border: none;
+}
+
+/* Buttons */
+button, .onboarding-button, .alt-button {
     background-color: var(--button-background);
-    color: white;
+    color: #fff;
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    width: 80%;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    margin-top: 10px;
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-button:hover, .onboarding-button:hover {
+button:hover, .onboarding-button:hover, .alt-button:hover {
     background-color: var(--button-hover);
     transform: scale(1.02);
 }
@@ -151,7 +143,7 @@ button:hover, .onboarding-button:hover {
     margin-left: 10%;
 }
 
-/* Dashboard Styling */
+/* Dashboard */
 #dashboard {
     background-color: var(--card-background);
     padding: 20px;
@@ -160,6 +152,21 @@ button:hover, .onboarding-button:hover {
     max-width: 600px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
     margin-top: 20px;
+}
+
+.dashboard-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+}
+
+.dashboard-card {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* Avatar Section Styling */
@@ -171,25 +178,12 @@ button:hover, .onboarding-button:hover {
     border: 1px solid #444;
 }
 
-/* Workout Logging Section Styling */
 #workout-section label, #avatar-customization-section label {
     color: var(--accent-color);
     margin-left: 0;
 }
 
-#workout-section input[type="number"], #avatar-customization-section select {
-    width: 95%;
-    margin-top: 5px;
-}
-
-/* Workout Message Styling */
-#workout-message {
-    margin-top: 10px;
-    color: var(--accent-color);
-    font-weight: bold;
-}
-
-/* Workout History Styling */
+/* Workout History */
 #workout-history-section h3 {
     margin-bottom: 15px;
 }
@@ -202,7 +196,7 @@ button:hover, .onboarding-button:hover {
     font-size: 0.9em;
 }
 
-/* Avatar Customization Button Styling */
+/* Avatar Customization Button */
 #avatar-customization-section button {
     background-color: var(--button-background);
     color: white;
@@ -239,4 +233,12 @@ button:hover, .onboarding-button:hover {
     h3 {
         font-size: 1.2em;
     }
+}
+
+/* Footer */
+footer {
+    margin-top: 30px;
+    font-size: 0.8em;
+    color: var(--text-color);
+    text-align: center;
 }

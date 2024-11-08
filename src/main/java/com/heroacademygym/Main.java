@@ -1,5 +1,6 @@
 package com.heroacademygym;
 
+import java.util.Date;
 import static spark.Spark.*;
 import com.heroacademygym.models.User;
 import com.mongodb.client.MongoClients;
@@ -14,13 +15,13 @@ import com.google.gson.Gson;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
-    private static MongoClient mongoClient;
+    private static MongoClient mongoClient; // Class-level declaration for mongoClient
     private static MongoCollection<Document> userCollection;
     private static MongoCollection<Document> workoutCollection;
     private static Gson gson = new Gson();
 
     public static void main(String[] args) {
-        // Set up port and database connections
+        // Configure port and MongoDB connection
         String portEnv = System.getenv("PORT");
         if (!isNullOrEmpty(portEnv)) {
             port(Integer.parseInt(portEnv));
@@ -31,7 +32,7 @@ public class Main {
         ipAddress("0.0.0.0");
         staticFiles.location("/public");
 
-        // Initialize mongoClient
+        // Initialize mongoClient here
         System.out.println("MongoDB URI: " + System.getenv("MONGO_DB_URI"));
         mongoClient = MongoClients.create(System.getenv("MONGO_DB_URI"));
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
@@ -42,7 +43,11 @@ public class Main {
 
         // Redirect root to index.html
         get("/", (req, res) -> {
-            res.redirect("/index.html");
+            if (req.session().attribute("userId") != null) {
+                res.redirect("/dashboard.html");
+            } else {
+                res.redirect("/index.html");
+            }
             return null;
         });
 
@@ -82,18 +87,13 @@ public class Main {
             try {
                 String username = req.queryParams("username");
                 String password = req.queryParams("password");
-                String name = req.queryParams("name");
-                String age = req.queryParams("age");
-                String email = req.queryParams("email");
-                String fitnessGoal = req.queryParams("fitnessGoal");
 
-                // Debugging output to see the values of username and password
                 System.out.println("Username: " + username);
                 System.out.println("Password: " + password);
 
-                if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(name) || isNullOrEmpty(age) || isNullOrEmpty(email) || isNullOrEmpty(fitnessGoal)) {
+                if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
                     res.status(400);
-                    return "Error: All fields are required.";
+                    return "Error: Username and password are required.";
                 }
 
                 username = username.trim();
@@ -104,21 +104,10 @@ public class Main {
                     return "Error: Username already exists.";
                 }
 
-                // Hash the password
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-                // Create a new user document and save it
-                Document newUser = new Document("username", username)
-                        .append("password", hashedPassword)
-                        .append("name", name)
-                        .append("age", Integer.parseInt(age))
-                        .append("email", email)
-                        .append("fitnessGoal", fitnessGoal)
-                        .append("strength", 50)
-                        .append("stamina", 50)
-                        .append("cardioHealth", 50);
-                
-                userCollection.insertOne(newUser);
+                User newUser = new User(username, hashedPassword);
+                saveUser(newUser);
 
                 return "Account created successfully for " + username;
             } catch (NullPointerException e) {
@@ -129,24 +118,6 @@ public class Main {
                 e.printStackTrace();
                 res.status(500);
                 return "Server error during sign-up.";
-            }
-        });
-
-        // CHECK SESSION ENDPOINT
-        get("/check-session", (req, res) -> {
-            String userIdStr = req.session().attribute("userId");
-            if (isNullOrEmpty(userIdStr)) {
-                res.status(401); // No active session
-                return "No active session";
-            }
-
-            Document userDoc = userCollection.find(Filters.eq("_id", new ObjectId(userIdStr))).first();
-            if (userDoc != null) {
-                res.status(200);
-                return userDoc.getString("username");
-            } else {
-                res.status(404);
-                return "User not found";
             }
         });
 
@@ -206,6 +177,6 @@ public class Main {
             .append("stamina", user.getAvatar().getStamina())
             .append("cardioHealth", user.getAvatar().getCardioHealth());
 
-        userCollection.replaceOne(Filters.eq("_id", user.getId()), doc, new ReplaceOptions().upsert(true));
+        userCollection.insertOne(doc);
     }
 }
