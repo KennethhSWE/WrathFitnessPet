@@ -3,19 +3,21 @@ package com.heroacademygym.models;
 public class User {
     private String username;
     private String password;
-    private String email; // Added email field
+    private String email;
+    private int strength;      // Added directly to the User class
+    private int stamina;       // Added directly to the User class
+    private int cardioHealth;  // Added directly to the User class
 
-    // Constructor that includes email
+    // Constructor that includes email and attributes
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-    }
 
-    // Existing constructor with two parameters, in case it's needed elsewhere in your code
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+        // Initialize default attributes for new users
+        this.strength = 50;       // Default value
+        this.stamina = 50;        // Default value
+        this.cardioHealth = 50;   // Default value
     }
 
     // Getters and setters
@@ -27,20 +29,32 @@ public class User {
         return password;
     }
 
-    public String getEmail() { // Added getEmail method
+    public String getEmail() {
         return email;
     }
 
-    // Setters if needed (optional)
-    public void setUsername(String username) {
-        this.username = username;
+    public int getStrength() {
+        return strength;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public int getStamina() {
+        return stamina;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public int getCardioHealth() {
+        return cardioHealth;
+    }
+
+    // Setters for attributes if needed
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public void setStamina(int stamina) {
+        this.stamina = stamina;
+    }
+
+    public void setCardioHealth(int cardioHealth) {
+        this.cardioHealth = cardioHealth;
     }
 }

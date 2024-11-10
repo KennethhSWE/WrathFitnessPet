@@ -88,7 +88,7 @@ public class Main {
                 JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
                 String username = json.get("username").getAsString();
                 String password = json.get("password").getAsString();
-                String email = json.get("email").getAsString(); // Including email
+                String email = json.get("email").getAsString();
 
                 if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email)) {
                     res.status(400);
@@ -101,7 +101,7 @@ public class Main {
                 }
 
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                User newUser = new User(username, hashedPassword, email); // Now using the constructor with email
+                User newUser = new User(username, hashedPassword, email);
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
@@ -199,11 +199,10 @@ public class Main {
         Document doc = new Document("username", user.getUsername())
             .append("password", user.getPassword())
             .append("email", user.getEmail()) // Added email field to user document
-            .append("strength", user.getAvatar().getStrength())
-            .append("stamina", user.getAvatar().getStamina())
-            .append("cardioHealth", user.getAvatar().getCardioHealth());
+            .append("strength", user.getStrength()) // Store strength attribute
+            .append("stamina", user.getStamina())   // Store stamina attribute
+            .append("cardioHealth", user.getCardioHealth()); // Store cardioHealth attribute
 
         userCollection.insertOne(doc);
     }
 }
-
