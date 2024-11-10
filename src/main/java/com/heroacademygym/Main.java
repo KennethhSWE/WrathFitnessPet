@@ -15,6 +15,8 @@ import com.mongodb.client.model.Sorts;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class Main {
@@ -54,8 +56,9 @@ public class Main {
         // LOGIN ENDPOINT
         post("/login", (req, res) -> {
             try {
-                String username = req.queryParams("username");
-                String password = req.queryParams("password");
+                JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
+                String username = json.get("username").getAsString();
+                String password = json.get("password").getAsString();
 
                 if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
                     res.status(400);
@@ -82,12 +85,14 @@ public class Main {
         // SIGN UP ENDPOINT
         post("/signup", (req, res) -> {
             try {
-                String username = req.queryParams("username");
-                String password = req.queryParams("password");
+                JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
+                String username = json.get("username").getAsString();
+                String password = json.get("password").getAsString();
+                String email = json.get("email").getAsString();
 
-                if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
+                if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email)) {
                     res.status(400);
-                    return "Error: Username and password are required.";
+                    return "Error: Username, password, and email are required.";
                 }
 
                 if (userCollection.find(Filters.eq("username", username)).first() != null) {
@@ -96,7 +101,7 @@ public class Main {
                 }
 
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                User newUser = new User(username, hashedPassword);
+                User newUser = new User(username, hashedPassword, email);
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
@@ -137,11 +142,13 @@ public class Main {
             }
 
             try {
+                JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
+                double weight = json.get("weight").getAsDouble();
+                int reps = json.get("reps").getAsInt();
+                boolean dailyGoal = json.get("dailyGoal").getAsBoolean();
+                boolean streakBonus = json.get("streakBonus").getAsBoolean();
+
                 ObjectId userId = new ObjectId(userIdStr);
-                double weight = Double.parseDouble(req.queryParams("weight"));
-                int reps = Integer.parseInt(req.queryParams("reps"));
-                boolean dailyGoal = Boolean.parseBoolean(req.queryParams("dailyGoal"));
-                boolean streakBonus = Boolean.parseBoolean(req.queryParams("streakBonus"));
 
                 Document workout = new Document("userId", userId)
                     .append("timestamp", new Date())
@@ -191,6 +198,7 @@ public class Main {
     private static void saveUser(User user) {
         Document doc = new Document("username", user.getUsername())
             .append("password", user.getPassword())
+            .append("email", user.getEmail()) // Added email field to user document
             .append("strength", user.getAvatar().getStrength())
             .append("stamina", user.getAvatar().getStamina())
             .append("cardioHealth", user.getAvatar().getCardioHealth());

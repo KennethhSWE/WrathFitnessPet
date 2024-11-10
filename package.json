@@ -1,0 +1,23 @@
+{
+  "name": "heroacademygym",
+  "version": "1.0.0",
+  "description": "WrathFitnessPet--\r WrathFitnessPet is a fitness-oriented app where users can nurture a virtual pet through physical activities like walking, running, or exercising. As users achieve their fitness goals, the virtual pet gains experience points, levels up, and evolves, making fitness engaging and interactive. Integrated with the Strava API, the app tracks users' physical activities and stores fitness data securely in MongoDB.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.1",
+    "nodemailer": "^6.9.16"
+  }
+}
