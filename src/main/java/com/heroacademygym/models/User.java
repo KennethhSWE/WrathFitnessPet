@@ -1,8 +1,10 @@
 package com.heroacademygym.models;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class User {
     private String username;
-    private String password;
+    private String passwordHash; // Store hashed password
     private String email;
     private int strength;      // Added directly to the User class
     private int stamina;       // Added directly to the User class
@@ -11,7 +13,7 @@ public class User {
     // Constructor that includes email and attributes
     public User(String username, String password, String email) {
         this.username = username;
-        this.password = password;
+        this.passwordHash = hashPassword(password); // Hash the password before storing
         this.email = email;
 
         // Initialize default attributes for new users
@@ -20,13 +22,19 @@ public class User {
         this.cardioHealth = 50;   // Default value
     }
 
+    // Password hashing method
+    private String hashPassword(String plainPassword) {
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    }
+
+    // Method to verify password
+    public boolean verifyPassword(String plainPassword) {
+        return BCrypt.checkpw(plainPassword, this.passwordHash);
+    }
+
     // Getters and setters
     public String getUsername() {
         return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public String getEmail() {
@@ -56,5 +64,10 @@ public class User {
 
     public void setCardioHealth(int cardioHealth) {
         this.cardioHealth = cardioHealth;
+    }
+
+    // Setters for sensitive data (e.g., password)
+    public void setPassword(String newPassword) {
+        this.passwordHash = hashPassword(newPassword);
     }
 }

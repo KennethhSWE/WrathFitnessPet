@@ -1,22 +1,36 @@
-# Use an official OpenJDK runtime as the base image
-FROM openjdk:17-jdk-slim  # Changed to Java 17 for compatibility, but you can revert to 21 if required
+# First stage: Build the application
+FROM openjdk:17-jdk-slim as builder
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy only necessary files for a faster build
+# Copy only Gradle wrapper and project metadata first (to leverage caching)
 COPY build.gradle settings.gradle gradlew* ./
 COPY gradle ./gradle
-COPY src ./src
 
 # Give executable permissions to the Gradle wrapper
 RUN chmod +x ./gradlew
 
+# Download dependencies (this layer will be cached if no changes are made)
+RUN ./gradlew dependencies --no-daemon
+
+# Copy the source files last
+COPY src ./src
+
 # Build the application, generating the shadow JAR
-RUN ./gradlew clean shadowJar --info --stacktrace --warning-mode all
+RUN ./gradlew clean shadowJar --info --stacktrace --warning-mode all --no-daemon
+
+# Second stage: Create a smaller runtime image
+FROM openjdk:17-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the generated JAR file from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 # Expose the port your app runs on (ensure this matches your app's port)
 EXPOSE 8080
 
 # Command to run the shadow JAR file
-CMD ["java", "-jar", "build/libs/HeroAcademyGym-1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]

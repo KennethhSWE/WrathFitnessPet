@@ -66,7 +66,7 @@ public class Main {
                 }
 
                 Document userDoc = userCollection.find(Filters.eq("username", username)).first();
-                if (userDoc == null || !BCrypt.checkpw(password, userDoc.getString("password"))) {
+                if (userDoc == null || !BCrypt.checkpw(password, userDoc.getString("passwordHash"))) {
                     res.status(401);
                     return "Error: Invalid username or password.";
                 }
@@ -100,8 +100,7 @@ public class Main {
                     return "Error: Username already exists.";
                 }
 
-                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                User newUser = new User(username, hashedPassword, email);
+                User newUser = new User(username, password, email);
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
@@ -197,7 +196,7 @@ public class Main {
 
     private static void saveUser(User user) {
         Document doc = new Document("username", user.getUsername())
-            .append("password", user.getPassword())
+            .append("passwordHash", user.verifyPassword(user.getPassword())) // Store hashed password
             .append("email", user.getEmail()) // Added email field to user document
             .append("strength", user.getStrength()) // Store strength attribute
             .append("stamina", user.getStamina())   // Store stamina attribute
