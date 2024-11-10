@@ -100,7 +100,8 @@ public class Main {
                     return "Error: Username already exists.";
                 }
 
-                User newUser = new User(username, password, email);
+                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                User newUser = new User(username, hashedPassword, email);
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
@@ -196,7 +197,7 @@ public class Main {
 
     private static void saveUser(User user) {
         Document doc = new Document("username", user.getUsername())
-            .append("passwordHash", user.verifyPassword(user.getPassword())) // Store hashed password
+            .append("passwordHash", user.getPasswordHash()) // Store hashed password directly
             .append("email", user.getEmail()) // Added email field to user document
             .append("strength", user.getStrength()) // Store strength attribute
             .append("stamina", user.getStamina())   // Store stamina attribute

@@ -11,9 +11,9 @@ public class User {
     private int cardioHealth;  // Added directly to the User class
 
     // Constructor that includes email and attributes
-    public User(String username, String password, String email) {
+    public User(String username, String passwordHash, String email) {
         this.username = username;
-        this.passwordHash = hashPassword(password); // Hash the password before storing
+        this.passwordHash = passwordHash; // Store hashed password directly
         this.email = email;
 
         // Initialize default attributes for new users
@@ -39,6 +39,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public int getStrength() {
