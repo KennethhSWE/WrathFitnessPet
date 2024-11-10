@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.0' // Add the shadow plugin to bundle dependencies into the JAR
+    id 'com.github.johnrengelman.shadow' version '7.1.0' // Shadow plugin to bundle dependencies
 }
 
 group 'com.heroacademygym'
@@ -16,7 +16,7 @@ dependencies {
     implementation 'com.sparkjava:spark-core:2.9.3'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'org.mongodb:mongodb-driver-sync:4.7.0'
-    implementation 'org.slf4j:slf4j-simple:1.7.30'  // This provides a simple SLF4J binding
+    implementation 'org.slf4j:slf4j-simple:1.7.30'
     implementation 'org.mindrot:jbcrypt:0.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
@@ -24,20 +24,20 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)  // Use a more compatible Java version (17 is LTS)
+        languageVersion = JavaLanguageVersion.of(17) // LTS version for compatibility
     }
 }
 
-// Specify the main class for the run task
+// Specify the main class for the application
 application {
-    mainClass = 'com.heroacademygym.Main'  // Ensure this matches your package and class structure
+    mainClass = 'com.heroacademygym.Main'
 }
 
-// Add Main-Class to the JAR manifest
-jar {
+// Add Main-Class attribute to the manifest for the JAR
+tasks.named('jar') {
     manifest {
         attributes(
-            'Main-Class': 'com.heroacademygym.Main'  // Correct the main class path
+            'Main-Class': 'com.heroacademygym.Main'  // Ensure this matches your package structure
         )
     }
 }
@@ -46,29 +46,33 @@ jar {
 tasks.named('shadowJar') {
     archiveBaseName.set('HeroAcademyGym')
     archiveClassifier.set('')
-    archiveVersion.set('1.0-SNAPSHOT')
+    archiveVersion.set(version)
 
-    // Ensure shadow jar runs before the jar task
-    mustRunAfter(tasks.named('jar'))
+    // Ensure the shadow JAR is the one that runs by default
+    manifest {
+        attributes('Main-Class': 'com.heroacademygym.Main')
+    }
 }
 
-// Ensure the shadow JAR task runs before the dependent tasks
+// Ensure the build task depends on the shadow JAR task to produce the executable JAR with dependencies
+tasks.build {
+    dependsOn tasks.shadowJar
+}
+
+// Set the distribution tasks to use the shadow JAR
 tasks.named('startScripts') {
-    dependsOn shadowJar
+    dependsOn tasks.shadowJar
 }
 
 tasks.named('distZip') {
-    dependsOn shadowJar
+    dependsOn tasks.shadowJar
 }
 
 tasks.named('distTar') {
-    dependsOn shadowJar
+    dependsOn tasks.shadowJar
 }
 
-tasks.named('build') {
-    dependsOn shadowJar  // Ensure shadow JAR is built before the main build task completes
-}
-
+// Use JUnit Platform for testing
 test {
     useJUnitPlatform()
 }
