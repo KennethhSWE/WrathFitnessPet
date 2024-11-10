@@ -1,29 +1,46 @@
 package com.heroacademygym.models;
 
-import org.bson.types.ObjectId;
-
 public class User {
-    private ObjectId id;               // MongoDB document ID
-    private String username;           // Username
-    private String password;           // Password (to be hashed in a real app)
-    private Avatar avatar;             // Avatar stats
+    private String username;
+    private String password;
+    private String email; // Added email field
 
-    // Constructor for a new user with default avatar stats
+    // Constructor that includes email
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    // Existing constructor with two parameters, in case it's needed elsewhere in your code
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        this.avatar = new Avatar(username); // Initializes a new avatar with default stats
     }
 
-    // Getters and Setters
-    public ObjectId getId() { return id; }
-    public void setId(ObjectId id) { this.id = id; }
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public Avatar getAvatar() { return avatar; }
+    // Getters and setters
+    public String getUsername() {
+        return username;
+    }
 
-    // Method to update avatar stats after a workout
-    public void updateAvatarStats(int weight, int reps, boolean hitDailyGoal, boolean hitStreakBonus) {
-        avatar.completeWorkout(weight, reps, hitDailyGoal, hitStreakBonus);
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() { // Added getEmail method
+        return email;
+    }
+
+    // Setters if needed (optional)
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

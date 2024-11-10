@@ -88,7 +88,7 @@ public class Main {
                 JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
                 String username = json.get("username").getAsString();
                 String password = json.get("password").getAsString();
-                String email = json.get("email").getAsString();
+                String email = json.get("email").getAsString(); // Including email
 
                 if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email)) {
                     res.status(400);
@@ -101,7 +101,7 @@ public class Main {
                 }
 
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                User newUser = new User(username, hashedPassword, email);
+                User newUser = new User(username, hashedPassword, email); // Now using the constructor with email
                 saveUser(newUser);
 
                 return "Account created successfully for " + username;
@@ -206,3 +206,4 @@ public class Main {
         userCollection.insertOne(doc);
     }
 }
+
