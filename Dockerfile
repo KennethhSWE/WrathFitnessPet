@@ -21,7 +21,7 @@ COPY src ./src
 RUN ./gradlew clean shadowJar --info --stacktrace --warning-mode all --no-daemon
 
 # Second stage: Create a smaller runtime image
-FROM openjdk:17-jre-slim
+FROM openjdk:17-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
