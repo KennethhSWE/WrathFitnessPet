@@ -1,10 +1,10 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.0' // Add the shadow plugin to move okhttp3 into the JAR
+    id 'com.github.johnrengelman.shadow' version '7.1.0' // Add the shadow plugin to bundle dependencies into the JAR
 }
 
-group 'com.wrathfitnesspet'
+group 'com.heroacademygym'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -20,12 +20,11 @@ dependencies {
     implementation 'org.mindrot:jbcrypt:0.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
-
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)  // Use a more compatible Java version (17 is LTS)
     }
 }
 
@@ -38,18 +37,18 @@ application {
 jar {
     manifest {
         attributes(
-            'Main-Class': 'main.Main'  // Replace with your actual main class path
+            'Main-Class': 'com.heroacademygym.Main'  // Correct the main class path
         )
     }
 }
 
 // Configuration for shadow JAR
 tasks.named('shadowJar') {
-    archiveBaseName.set('WrathFitnessPet')
+    archiveBaseName.set('HeroAcademyGym')
     archiveClassifier.set('')
     archiveVersion.set('1.0-SNAPSHOT')
 
-    //Ensure shadow jar runs before the jar task 
+    // Ensure shadow jar runs before the jar task
     mustRunAfter(tasks.named('jar'))
 }
 
@@ -64,6 +63,10 @@ tasks.named('distZip') {
 
 tasks.named('distTar') {
     dependsOn shadowJar
+}
+
+tasks.named('build') {
+    dependsOn shadowJar  // Ensure shadow JAR is built before the main build task completes
 }
 
 test {
