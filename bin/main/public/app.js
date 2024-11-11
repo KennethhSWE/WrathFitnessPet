@@ -62,7 +62,7 @@ function initializeCharacterPreview() {
     const loader = new THREE.FBXLoader();
     loader.load('/proxy-fbx', function(object) {  // Updated to call proxy route
         object.scale.set(0.021, 0.021, 0.021); // Adjust scale
-        object.position.set(0, -1, 0);
+        object.position.set(0, -1, 0);  // Set initial position of the object
         scene.add(object);
         window.Object = object;
 
@@ -85,9 +85,9 @@ function initializeCharacterPreview() {
         console.error('An error occurred while loading the FBX model:', error);
     });
 
-    // Position the camera
-    camera.position.set(0, 1.5, 4);
-    camera.lookAt(0, 1, 0);
+    // Position the camera and ensure it's correct
+    camera.position.set(0, 1.5, 4);  // Set the camera position
+    camera.lookAt(0, 1, 0);  // Ensure the camera is looking at the model
 }
 
 // Enhanced sign-up function with code validation
