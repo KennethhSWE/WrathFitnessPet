@@ -50,20 +50,6 @@ body::before {
     z-index: -1;
 }
 
-/* Background Feature Overlay for Login */
-.background-feature {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 60%;
-    background: rgba(255, 255, 255, 0.1); /* Light translucent background */
-    border-radius: 15px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
-    z-index: -1;
-}
-
 /* Font Styles */
 h1 {
     font-family: 'Cinzel', serif;
@@ -108,7 +94,7 @@ header {
 /* Main Container */
 .main-container {
     width: 100%;
-    max-width: 500px;
+    max-width: 800px; /* Increased width for larger dashboard */
     background-color: var(--card-background);
     padding: 20px;
     border-radius: 10px;
@@ -117,70 +103,43 @@ header {
     margin-top: 20px; /* Ensures spacing between header and main sections */
 }
 
-/* Registration Container Styling */
-#registration-container {
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns: one for the model and one for stats */
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Model Section */
+#model-section {
+    grid-column: 1 / 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 2px solid var(--accent-color);
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-    max-width: 400px;
-    text-align: center;
+    padding: 15px;
     background-color: rgba(0, 0, 0, 0.7);
-}
-
-#registration-container h2, #registration-container h3 {
-    margin-bottom: 15px;
-}
-
-/* Label and Input Styles */
-label {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    font-size: 0.9em;
-    margin-bottom: 8px;
-}
-
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: #444;
-    color: var(--text-color);
-    font-size: 0.9em;
-}
-
-/* Button Styles */
-button, .onboarding-button {
-    background-color: var(--button-background);
-    color: white;
-    padding: 12px 24px;
-    border: none;
     border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.model-preview {
     width: 100%;
-    max-width: 300px;
-    margin: 10px auto;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    font-size: 1em;
+    height: 300px;
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    margin-top: 15px;
+    background-color: #333;
 }
 
-/* Button Hover and Press Effects */
-button:hover, .onboarding-button:hover {
-    background-color: var(--button-hover);
-    transform: scale(1.02);
-}
-
-button:active, .onboarding-button:active {
-    background-color: var(--button-active);
-    transform: translateY(2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+/* Avatar Stats Section */
+#avatar-section {
+    grid-column: 2 / 3;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
 /* XP Progress Bar Styles */
@@ -213,6 +172,53 @@ button:active, .onboarding-button:active {
     color: var(--accent-color);
 }
 
+/* Workout Logging Card */
+#workout-section {
+    grid-column: 1 / 3;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+/* Workout History Section */
+#workout-history-section {
+    grid-column: 1 / 3;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Button Styles */
+button, .onboarding-button {
+    background-color: var(--button-background);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    max-width: 300px;
+    margin: 10px auto;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    font-size: 1em;
+}
+
+/* Button Hover and Press Effects */
+button:hover, .onboarding-button:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.02);
+}
+
+button:active, .onboarding-button:active {
+    background-color: var(--button-active);
+    transform: translateY(2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Error Message Styling */
 .error-message {
     color: var(--error-color);
@@ -242,5 +248,9 @@ button:active, .onboarding-button:active {
 
     .logo {
         height: 60px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
     }
 }

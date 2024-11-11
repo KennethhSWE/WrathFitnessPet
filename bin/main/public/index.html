@@ -77,7 +77,7 @@
                         <input type="text" id="signup-code" placeholder="Enter Sign-Up Code" required>
                     </div>
                     <button type="button" class="onboarding-button" onclick="signUp()">Create Account</button>
-                    <p id="registration-message" class="error-message"></p> <!-- New feedback message element -->
+                    <p id="registration-message" class="error-message"></p>
                 </form>
                 <button class="alt-button" onclick="showLogin()">Already a Member?</button>
             </div>
@@ -125,12 +125,16 @@
                 <button onclick="logout()">Log Out</button>
                 
                 <div class="dashboard-grid">
-                    <!-- Avatar Section with Three.js Canvas -->
-                    <div id="avatar-section" class="dashboard-card">
+                    <!-- Model Display Section -->
+                    <div id="model-section" class="dashboard-card">
                         <h3>Your Avatar</h3>
                         <!-- Three.js Canvas for 3D Character Preview -->
-                        <div id="character-preview" class="character-preview"></div>
+                        <div id="model-preview" class="model-preview"></div>
+                    </div>
 
+                    <!-- Avatar Stats Section -->
+                    <div id="avatar-section" class="dashboard-card">
+                        <h3>Your Stats</h3>
                         <p><strong>Name:</strong> <span id="avatar-name">Hero</span></p>
                         <p><strong>Level:</strong> <span id="avatar-level">1</span></p>
 
