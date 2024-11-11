@@ -62,9 +62,11 @@ public class Main {
         // LOGIN ENDPOINT
         post("/login", (req, res) -> {
             try {
+                System.out.println("Login attempt started...");
                 JsonObject json = JsonParser.parseString(req.body()).getAsJsonObject();
                 String username = json.get("username").getAsString();
                 String password = json.get("password").getAsString();
+                System.out.println("Received login request for username: " + username);
 
                 if (isNullOrEmpty(username) || isNullOrEmpty(password)) {
                     res.status(400);
@@ -72,7 +74,15 @@ public class Main {
                 }
 
                 Document userDoc = userCollection.find(Filters.eq("username", username)).first();
-                if (userDoc == null || !BCrypt.checkpw(password, userDoc.getString("passwordHash"))) {
+                if (userDoc == null) {
+                    System.out.println("User not found for username: " + username);
+                    res.status(401);
+                    return "Error: Invalid username or password.";
+                }
+
+                boolean passwordMatches = BCrypt.checkpw(password, userDoc.getString("passwordHash"));
+                if (!passwordMatches) {
+                    System.out.println("Invalid password for username: " + username);
                     res.status(401);
                     return "Error: Invalid username or password.";
                 }
@@ -80,8 +90,10 @@ public class Main {
                 // Create session
                 ObjectId userId = userDoc.getObjectId("_id");
                 req.session(true).attribute("userId", userId.toHexString());
+                System.out.println("Login successful for user: " + username);
                 return "Login successful for user " + username;
             } catch (Exception e) {
+                System.err.println("Exception occurred during login: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
                 return "Server error during login.";
@@ -97,6 +109,8 @@ public class Main {
                 String email = json.get("email").getAsString();
                 String signUpCode = json.get("signUpCode").getAsString(); // New code field
 
+                System.out.println("Sign-up request received for username: " + username);
+
                 if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email) || isNullOrEmpty(signUpCode)) {
                     res.status(400);
                     return "Error: Username, password, email, and sign-up code are required.";
@@ -105,11 +119,13 @@ public class Main {
                 // Validate the sign-up code
                 Document codeDoc = signUpCodeCollection.find(Filters.eq("code", signUpCode)).first();
                 if (codeDoc == null || codeDoc.getBoolean("redeemed")) {
+                    System.out.println("Invalid or already redeemed sign-up code: " + signUpCode);
                     res.status(400);
                     return "Error: Invalid or already redeemed sign-up code.";
                 }
 
                 if (userCollection.find(Filters.eq("username", username)).first() != null) {
+                    System.out.println("Username already exists: " + username);
                     res.status(409);
                     return "Error: Username already exists.";
                 }
@@ -123,8 +139,10 @@ public class Main {
                 codeDoc.put("redeemedBy", newUser.getUsername());
                 signUpCodeCollection.replaceOne(Filters.eq("_id", codeDoc.getObjectId("_id")), codeDoc);
 
+                System.out.println("Account created successfully for: " + username);
                 return "Account created successfully for " + username;
             } catch (Exception e) {
+                System.err.println("Exception occurred during sign-up: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
                 return "Server error during sign-up.";
@@ -133,23 +151,31 @@ public class Main {
 
         // LOGOUT ENDPOINT
         post("/logout", (req, res) -> {
+            System.out.println("Logout request received.");
             req.session().invalidate();
             return "You have been logged out.";
         });
 
         // CHECK SESSION ENDPOINT
         get("/check-session", (req, res) -> {
-            String userIdStr = req.session().attribute("userId");
-            if (isNullOrEmpty(userIdStr)) {
-                res.status(401);
-                return "Unauthorized";
+            try {
+                String userIdStr = req.session().attribute("userId");
+                if (isNullOrEmpty(userIdStr)) {
+                    res.status(401);
+                    return "Unauthorized";
+                }
+                Document userDoc = userCollection.find(Filters.eq("_id", new ObjectId(userIdStr))).first();
+                if (userDoc == null) {
+                    res.status(404);
+                    return "User not found";
+                }
+                return userDoc.getString("username");
+            } catch (Exception e) {
+                System.err.println("Exception occurred during session check: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                return "Server error during session check.";
             }
-            Document userDoc = userCollection.find(Filters.eq("_id", new ObjectId(userIdStr))).first();
-            if (userDoc == null) {
-                res.status(404);
-                return "User not found";
-            }
-            return userDoc.getString("username");
         });
 
         // LOG WORKOUT ENDPOINT
@@ -177,8 +203,10 @@ public class Main {
                         .append("streakBonus", streakBonus);
 
                 workoutCollection.insertOne(workout);
+                System.out.println("Workout logged successfully for user: " + userIdStr);
                 return "Workout logged successfully!";
             } catch (Exception e) {
+                System.err.println("Exception occurred during workout log: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
                 return "Error logging workout.";
@@ -202,6 +230,7 @@ public class Main {
                 res.type("application/json");
                 return gson.toJson(workouts);
             } catch (Exception e) {
+                System.err.println("Exception occurred while fetching workout history: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
                 return "Error retrieving workout history.";
