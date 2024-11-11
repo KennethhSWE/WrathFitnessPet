@@ -48,7 +48,7 @@ function initializeCharacterPreview() {
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
-    document.getElementById('character-preview').appendChild(renderer.domElement);
+    document.getElementById('model-preview').appendChild(renderer.domElement); // Updated ID to 'model-preview'
 
     // Set up lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
