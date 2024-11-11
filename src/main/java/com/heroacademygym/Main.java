@@ -151,11 +151,11 @@ public class Main {
                 ObjectId userId = new ObjectId(userIdStr);
 
                 Document workout = new Document("userId", userId)
-                    .append("timestamp", new Date())
-                    .append("weight", weight)
-                    .append("reps", reps)
-                    .append("dailyGoal", dailyGoal)
-                    .append("streakBonus", streakBonus);
+                        .append("timestamp", new Date())
+                        .append("weight", weight)
+                        .append("reps", reps)
+                        .append("dailyGoal", dailyGoal)
+                        .append("streakBonus", streakBonus);
 
                 workoutCollection.insertOne(workout);
                 return "Workout logged successfully!";
@@ -177,8 +177,8 @@ public class Main {
             try {
                 ObjectId userId = new ObjectId(userIdStr);
                 List<Document> workouts = workoutCollection.find(Filters.eq("userId", userId))
-                    .sort(Sorts.descending("timestamp"))
-                    .into(new ArrayList<>());
+                        .sort(Sorts.descending("timestamp"))
+                        .into(new ArrayList<>());
 
                 res.type("application/json");
                 return gson.toJson(workouts);
@@ -197,12 +197,13 @@ public class Main {
 
     private static void saveUser(User user) {
         Document doc = new Document("username", user.getUsername())
-            .append("passwordHash", user.getPasswordHash()) // Store hashed password directly
-            .append("email", user.getEmail()) // Added email field to user document
-            .append("strength", user.getStrength()) // Store strength attribute
-            .append("stamina", user.getStamina())   // Store stamina attribute
-            .append("cardioHealth", user.getCardioHealth()); // Store cardioHealth attribute
+                .append("passwordHash", user.getPasswordHash()) // Store hashed password directly
+                .append("email", user.getEmail()) // Added email field to user document
+                .append("strength", user.getStrength()) // Store strength attribute
+                .append("stamina", user.getStamina())   // Store stamina attribute
+                .append("cardioHealth", user.getCardioHealth()); // Store cardioHealth attribute
 
-        userCollection.insertOne(doc);
+        ReplaceOptions options = new ReplaceOptions().upsert(true);
+        userCollection.replaceOne(Filters.eq("username", user.getUsername()), doc, options);
     }
 }
