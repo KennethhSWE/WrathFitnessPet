@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import static spark.Spark.*;
 import com.heroacademygym.models.User;
+import com.heroacademygym.models.SignUpCode;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -23,6 +24,7 @@ public class Main {
     private static MongoClient mongoClient;
     private static MongoCollection<Document> userCollection;
     private static MongoCollection<Document> workoutCollection;
+    private static MongoCollection<Document> signUpCodeCollection; // New collection for sign-up codes
     private static Gson gson = new Gson();
 
     public static void main(String[] args) {
@@ -40,6 +42,7 @@ public class Main {
         MongoDatabase database = mongoClient.getDatabase("HeroAcademyGym");
         userCollection = database.getCollection("Users");
         workoutCollection = database.getCollection("Workouts");
+        signUpCodeCollection = database.getCollection("SignUpCodes"); // Initialize the sign-up codes collection
 
         System.out.println("Welcome to Hero Academy Gym!");
 
@@ -89,10 +92,18 @@ public class Main {
                 String username = json.get("username").getAsString();
                 String password = json.get("password").getAsString();
                 String email = json.get("email").getAsString();
+                String signUpCode = json.get("signUpCode").getAsString(); // New code field
 
-                if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email)) {
+                if (isNullOrEmpty(username) || isNullOrEmpty(password) || isNullOrEmpty(email) || isNullOrEmpty(signUpCode)) {
                     res.status(400);
-                    return "Error: Username, password, and email are required.";
+                    return "Error: Username, password, email, and sign-up code are required.";
+                }
+
+                // Validate the sign-up code
+                Document codeDoc = signUpCodeCollection.find(Filters.eq("code", signUpCode)).first();
+                if (codeDoc == null || codeDoc.getBoolean("redeemed")) {
+                    res.status(400);
+                    return "Error: Invalid or already redeemed sign-up code.";
                 }
 
                 if (userCollection.find(Filters.eq("username", username)).first() != null) {
@@ -103,6 +114,11 @@ public class Main {
                 String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
                 User newUser = new User(username, hashedPassword, email);
                 saveUser(newUser);
+
+                // Mark the sign-up code as redeemed
+                codeDoc.put("redeemed", true);
+                codeDoc.put("redeemedBy", newUser.getUsername());
+                signUpCodeCollection.replaceOne(Filters.eq("_id", codeDoc.getObjectId("_id")), codeDoc);
 
                 return "Account created successfully for " + username;
             } catch (Exception e) {
