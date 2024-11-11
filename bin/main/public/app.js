@@ -61,10 +61,10 @@ function initializeCharacterPreview() {
     // Load the FBX model from the proxy endpoint
     const loader = new THREE.FBXLoader();
     loader.load('/proxy-fbx', function(object) {  // Updated to call proxy route
-        object.scale.set(0.05, 0.05, 0.05); // Adjust scale
+        object.scale.set(0.021, 0.021, 0.021); // Adjust scale
         object.position.set(0, -1, 0);
         scene.add(object);
-        window.object = object;
+        window.Object = object;
 
         // Set up animation mixer for the model
         const mixer = new THREE.AnimationMixer(object);
@@ -86,8 +86,8 @@ function initializeCharacterPreview() {
     });
 
     // Position the camera
-    camera.position.set(0, 1, 1);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(0, 1.5, 4);
+    camera.lookAt(0, 1, 0);
 }
 
 // Enhanced sign-up function with code validation
