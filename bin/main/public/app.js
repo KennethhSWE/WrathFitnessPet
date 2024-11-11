@@ -57,9 +57,9 @@ function initializeCharacterPreview() {
     directionalLight.position.set(5, 10, 7.5).normalize();
     scene.add(directionalLight);
 
-    // Load the FBX model
+    // Load the FBX model with the correct case for Idle.fbx
     const loader = new THREE.FBXLoader();
-    loader.load('assets/models/idle.fbx', function(object) {
+    loader.load('assets/models/Idle.fbx', function(object) {
         object.scale.set(0.02, 0.02, 0.02); // Adjust scale
         scene.add(object);
 
