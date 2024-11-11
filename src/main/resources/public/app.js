@@ -46,6 +46,7 @@ function showRegistration() {
 function initializeCharacterPreview() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
+    window.camera = camera;
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
     document.getElementById('model-preview').appendChild(renderer.domElement);
@@ -63,6 +64,7 @@ function initializeCharacterPreview() {
         object.scale.set(0.05, 0.05, 0.05); // Adjust scale
         object.position.set(0, -1, 0);
         scene.add(object);
+        window.object = object;
 
         // Set up animation mixer for the model
         const mixer = new THREE.AnimationMixer(object);
