@@ -67,7 +67,7 @@ function updateXPProgress(level, xp, xpToNextLevel) {
     document.getElementById('avatar-level').innerText = level;
     document.getElementById('avatar-xp').innerText = xp;
     document.getElementById('avatar-xp-next').innerText = xpToNextLevel;
-    
+
     const progressPercentage = (xp / xpToNextLevel) * 100;
     document.getElementById('xp-progress-bar').style.width = `${progressPercentage}%`;
     document.getElementById('xp-progress-text').innerText = `${progressPercentage.toFixed(0)}% to next level`;
@@ -79,7 +79,7 @@ async function signUp() {
     const password = document.getElementById('register-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
     const email = document.getElementById('register-email').value;
-    const signUpCode = prompt("Please enter your sign-up code:");
+    const signUpCode = document.getElementById('signup-code').value;
 
     // Basic input validation
     if (!username || !password || !email || !signUpCode) {
@@ -139,10 +139,12 @@ async function login() {
         } else {
             const message = await response.text();
             document.getElementById('login-message').innerText = message;
+            document.getElementById('login-message').style.padding = "10px"; // Improved error message padding
         }
     } catch (error) {
         console.error("Error during login:", error);
         document.getElementById('login-message').innerText = "An error occurred. Please try again.";
+        document.getElementById('login-message').style.padding = "10px"; // Improved error message padding
     }
 }
 

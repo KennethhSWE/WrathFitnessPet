@@ -16,29 +16,24 @@
             background-position: center;
             color: #f0f0f0;
         }
-
         .background-overlay {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 20px;
             min-height: 100vh;
         }
-
         .header {
             text-align: center;
             margin-bottom: 40px;
         }
-
         .logo {
             height: 150px;
         }
-
         h1 {
             font-family: 'Cinzel', serif;
             font-size: 2.5em;
             color: #FFD700;
             margin-bottom: 0;
         }
-
         .card {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
@@ -47,19 +42,15 @@
             max-width: 500px;
             margin: 20px auto;
         }
-
         .form-group {
             margin-bottom: 20px;
         }
-
         label {
             font-weight: bold;
             display: block;
             margin-bottom: 5px;
         }
-
-        input,
-        select {
+        input, select {
             width: calc(100% - 10px);
             padding: 10px;
             border: none;
@@ -68,7 +59,6 @@
             background: #333;
             color: #fff;
         }
-
         button {
             background-color: #ff4500;
             color: #fff;
@@ -82,35 +72,32 @@
             margin-top: 10px;
             transition: background-color 0.3s;
         }
-
         button:hover {
             background-color: #ff6a00;
         }
-
         .alt-button {
             background: none;
             color: #FFD700;
             border: 2px solid #FFD700;
             margin-top: 20px;
         }
-
         footer {
             text-align: center;
             margin-top: 50px;
             color: #ddd;
         }
-
         .error-message {
             color: #ff6347;
             font-size: 0.9em;
-            margin-top: -10px;
+            margin-top: 5px;
+            padding: 10px;
+            background-color: rgba(255, 99, 71, 0.1);
+            border-radius: 5px;
         }
-
         @media (min-width: 768px) {
             .header {
                 margin-bottom: 60px;
             }
-
             .card {
                 max-width: 600px;
             }
@@ -171,8 +158,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="sign-up-code"><i class="fas fa-key"></i> Sign-Up Code</label>
-                        <input type="text" id="sign-up-code" placeholder="Sign-Up Code" required>
+                        <label for="signup-code"><i class="fas fa-key"></i> Sign-Up Code</label>
+                        <input type="text" id="signup-code" placeholder="Enter Sign-Up Code" required>
                     </div>
                     <button type="button" class="onboarding-button" onclick="signUp()">Create Account</button>
                     <p id="registration-message" class="error-message"></p> <!-- New feedback message element -->
@@ -221,14 +208,14 @@
             <div class="card">
                 <h2>Welcome, <span id="username-display"></span>!</h2>
                 <button onclick="logout()">Log Out</button>
-
+                
                 <div class="dashboard-grid">
                     <!-- Avatar Card -->
                     <div id="avatar-section" class="dashboard-card">
                         <h3>Your Avatar</h3>
                         <p><strong>Name:</strong> <span id="avatar-name"></span></p>
                         <p><strong>Level:</strong> <span id="avatar-level">1</span></p>
-
+                        
                         <!-- XP Progress Bar -->
                         <div class="xp-progress-container">
                             <span id="current-level">1</span>
@@ -238,7 +225,7 @@
                             <span id="next-level">2</span>
                         </div>
                         <p><span id="xp-progress-text">0% to next level</span></p>
-
+                        
                         <p><strong>Strength:</strong> <span id="avatar-strength">50</span></p>
                         <p><strong>Stamina:</strong> <span id="avatar-stamina">50</span></p>
                         <p><strong>Cardio Health:</strong> <span id="avatar-cardio">50</span></p>
