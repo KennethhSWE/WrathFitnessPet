@@ -46,6 +46,9 @@ public class Main {
 
         System.out.println("Welcome to Hero Academy Gym!");
 
+        // Insert hardcoded sign-up code for testing
+        insertTestSignUpCode();
+
         // Redirect root to index.html
         get("/", (req, res) -> {
             if (req.session().attribute("userId") != null) {
@@ -204,6 +207,17 @@ public class Main {
                 return "Error retrieving workout history.";
             }
         });
+    }
+
+    // Insert a hardcoded test sign-up code
+    private static void insertTestSignUpCode() {
+        String testCode = "TEST12345";
+        if (signUpCodeCollection.find(Filters.eq("code", testCode)).first() == null) {
+            Document signUpCodeDoc = new Document("code", testCode)
+                    .append("redeemed", false);
+            signUpCodeCollection.insertOne(signUpCodeDoc);
+            System.out.println("Inserted test sign-up code: " + testCode);
+        }
     }
 
     // Utility Methods
