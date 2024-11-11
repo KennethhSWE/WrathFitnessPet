@@ -45,7 +45,7 @@ function showRegistration() {
 // Initialize Three.js character preview for the avatar section
 function initializeCharacterPreview() {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
     document.getElementById('model-preview').appendChild(renderer.domElement);
@@ -83,7 +83,7 @@ function initializeCharacterPreview() {
     });
 
     // Position the camera
-    camera.position.set(0, 1, 5);
+    camera.position.set(0, 1, 3);
     camera.lookAt(0, 1, 0);
 }
 
