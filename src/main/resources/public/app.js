@@ -57,10 +57,10 @@ function initializeCharacterPreview() {
     directionalLight.position.set(5, 10, 7.5).normalize();
     scene.add(directionalLight);
 
-    // Load the FBX model from GitHub release URL
+    // Load the FBX model from the proxy endpoint
     const loader = new THREE.FBXLoader();
-    loader.load('https://github.com/KennethhSWE/HeroAcademyGym/releases/download/v1.0.0/Idle.fbx', function(object) {
-        object.scale.set(0.02, 0.02, 0.02); // Adjust scale
+    loader.load('/proxy-fbx', function(object) {  // Updated to call proxy route
+        object.scale.set(0.2, 0.2, 0.2); // Adjust scale
         scene.add(object);
 
         // Set up animation mixer for the model

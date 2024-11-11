@@ -18,6 +18,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.mindrot.jbcrypt.BCrypt;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.HttpURLConnection;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 
 public class Main {
     private static MongoClient mongoClient;
@@ -224,7 +230,7 @@ public class Main {
                 ObjectId userId = new ObjectId(userIdStr);
                 List<Document> workouts = workoutCollection.find(Filters.eq("userId", userId))
                         .sort(Sorts.descending("timestamp"))
-                        .into(new ArrayList<>());
+                        .into(new ArrayList<>()); 
 
                 res.type("application/json");
                 return gson.toJson(workouts);
@@ -233,6 +239,43 @@ public class Main {
                 e.printStackTrace();
                 res.status(500);
                 return "Error retrieving workout history.";
+            }
+        });
+
+        // Proxy route to fetch the FBX model from GitHub
+        get("/proxy-fbx", (req, res) -> {
+            String modelUrl = "https://github.com/KennethhSWE/HeroAcademyGym/releases/download/v1.0.0/Idle.fbx";
+            try {
+                URL url = new URL(modelUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                // Set necessary headers if needed
+                connection.setRequestProperty("Accept", "application/octet-stream");
+
+                // Get input stream from GitHub
+                InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+
+                // Set response headers
+                res.type("application/octet-stream");
+                res.header("Content-Disposition", "attachment; filename=Idle.fbx");
+
+                // Output the file contents to the client
+                OutputStream outputStream = new BufferedOutputStream(res.raw().getOutputStream());
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.flush();
+                outputStream.close();
+                inputStream.close();
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+                res.status(500);
+                return "Error fetching FBX model.";
             }
         });
     }
