@@ -48,7 +48,7 @@ function initializeCharacterPreview() {
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
-    document.getElementById('model-preview').appendChild(renderer.domElement); // Updated ID to 'model-preview'
+    document.getElementById('model-preview').appendChild(renderer.domElement);
 
     // Set up lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -57,9 +57,9 @@ function initializeCharacterPreview() {
     directionalLight.position.set(5, 10, 7.5).normalize();
     scene.add(directionalLight);
 
-    // Load the FBX model with the correct case for Idle.fbx
+    // Load the FBX model from GitHub release URL
     const loader = new THREE.FBXLoader();
-    loader.load('assets/models/Idle.fbx', function(object) {
+    loader.load('https://github.com/KennethhSWE/HeroAcademyGym/releases/download/v1.0.0/Idle.fbx', function(object) {
         object.scale.set(0.02, 0.02, 0.02); // Adjust scale
         scene.add(object);
 
