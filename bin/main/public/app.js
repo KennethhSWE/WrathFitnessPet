@@ -45,7 +45,7 @@ function showRegistration() {
 // Initialize Three.js character preview for the avatar section
 function initializeCharacterPreview() {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
     document.getElementById('model-preview').appendChild(renderer.domElement);
@@ -60,7 +60,7 @@ function initializeCharacterPreview() {
     // Load the FBX model from the proxy endpoint
     const loader = new THREE.FBXLoader();
     loader.load('/proxy-fbx', function(object) {  // Updated to call proxy route
-        object.scale.set(0.2, 0.2, 0.2); // Adjust scale
+        object.scale.set(0.001, 0.001, 0.001); // Adjust scale
         scene.add(object);
 
         // Set up animation mixer for the model
@@ -83,7 +83,7 @@ function initializeCharacterPreview() {
     });
 
     // Position the camera
-    camera.position.set(0, 1, 2.5);
+    camera.position.set(0, 1, 5);
     camera.lookAt(0, 1, 0);
 }
 
