@@ -1,7 +1,7 @@
 // JavaScript to handle the Hero Academy Gym app
 
 // Check if user is already logged in on page load
-window.onload = async function() {
+/*window.onload = async function () {
     try {
         const response = await fetch('/check-session', { method: 'GET' });
         if (response.ok) {
@@ -18,6 +18,13 @@ window.onload = async function() {
         console.error("Error checking session:", error);
         showRegistration();
     }
+};*/
+// Testing for live view of dashboard changes!
+window.onload = function() {
+    document.getElementById('username-display').innerText = 'TestUser';
+    showDashboard();
+    initializeCharacterPreview();
+    updateXPProgress(1, 50, 100);
 };
 
 // Show the dashboard and hide other sections
@@ -46,7 +53,7 @@ function showRegistration() {
 function initializeCharacterPreview() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 300 / 300, 0.1, 1000);
-    //window.camera = camera;
+    //ngh nindow.camera = camera;
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(300, 300);
     document.getElementById('model-preview').appendChild(renderer.domElement);
@@ -131,7 +138,7 @@ async function signUp() {
 }
 
 // Enhanced login function with error handling
-async function login() {
+/*async function login() {
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
@@ -162,6 +169,14 @@ async function login() {
         document.getElementById('login-message').innerText = "An error occurred. Please try again.";
         document.getElementById('login-message').style.padding = "10px";
     }
+}*/
+
+// Testing for working on the dashboard with live view!
+function login() {
+    document.getElementById('username-display').innerText = 'TestUser';
+    showDashboard();
+    initializeCharacterPreview();
+    updateXPProgress(1, 50, 100);
 }
 
 // Log workout function with error handling and feedback
@@ -238,6 +253,19 @@ function updateXPProgress(level, xp, xpToNextLevel) {
     const progressPercentage = (xp / xpToNextLevel) * 100;
     document.getElementById('xp-progress-bar').style.width = `${progressPercentage}%`;
     document.getElementById('xp-progress-text').innerText = `${progressPercentage.toFixed(0)}% to next level`;
+
+    const progressbar = document.getElementById('xp-progress-bar');
+    progressbar.style.width = '${(xp / xpToNextLevel) * 100}%';
+
+    if (xp >= xpToNextLevel) {
+        const levelUpEffect = document.createElement('div');
+        levelUpEffect.innerHTML = '<div class ="level-up-animation">Level Up!</div>';
+        document.body.appendChild(levelUpEffect);
+
+        setTimeout(() => levelUpEffect.remove(), 2000);
+        progressbar.classList.add('level-up');
+        setTimeout(() => progressbar.classList.remove('level-up'), 2000);
+    }
 }
 
 // Request Password Reset

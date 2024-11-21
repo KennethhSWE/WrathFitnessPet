@@ -152,19 +152,61 @@ header {
 
 .xp-progress-bar-container {
     width: 80%;
-    background-color: var(--progress-bar-bg);
-    border-radius: 8px;
+    background-color: #2c2c2c;
+    border-radius: 10px;
     overflow: hidden;
     margin: 0 10px;
     height: 20px;
     display: flex;
     align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
 }
 
 .xp-progress-bar {
-    background-color: var(--progress-bar-fill);
+    background-color: linear-gradient(90deg, #ff9800, #ff5722);
     height: 100%;
-    transition: width 0.4s ease-in-out;
+    width: 0;
+    transition: width 0.5s ease-in-out;
+}
+
+.xp-progress-bar.level-up {
+    animation: glow is infinate alternate;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 10px #ff9800;
+    }
+    100% {
+        box-shadow: 0 0 20px #ff5722;
+    }
+}
+
+.level-up-animation {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff9800;
+    text-shadow: 0 0 10px #ff9800, 0 0 20px #ff5722;
+    animation: pop 1s ease-in-out;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0) translate(-50%, -50%);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.5) translate(-50%, -50%);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) translate(-50%, -50%);
+        opacity: 0;
+    }
 }
 
 #current-level, #next-level {
