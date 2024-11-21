@@ -123,13 +123,14 @@ header {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-.model-preview {
-    width: 100%;
-    height: 300px;
-    border: 2px solid var(--accent-color);
-    border-radius: 8px;
-    margin-top: 15px;
-    background-color: #333;
+.model-preview:before {
+    content: "Loading Avatar...";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--accent-color);
+    font-size: 1.2em;
 }
 
 /* Avatar Stats Section */
@@ -163,14 +164,24 @@ header {
 }
 
 .xp-progress-bar {
-    background-color: linear-gradient(90deg, #ff9800, #ff5722);
+    background: linear-gradient(90deg, #ff9800, #ff5722);
     height: 100%;
     width: 0;
     transition: width 0.5s ease-in-out;
 }
 
+.xp-progress-bar::after {
+    content: attr(data-percentage) '%';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8em;
+    color: white;
+}
+
 .xp-progress-bar.level-up {
-    animation: glow is infinate alternate;
+    animation: glow 1s infinate alternate;
 }
 
 @keyframes glow {
@@ -249,6 +260,12 @@ button, .onboarding-button {
     font-size: 1em;
 }
 
+/* Button Focus */
+button:focus, .onboarding-button:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
 /* Button Hover and Press Effects */
 button:hover, .onboarding-button:hover {
     background-color: var(--button-hover);
@@ -272,27 +289,12 @@ button:active, .onboarding-button:active {
 
 /* Responsive Adjustments */
 @media (max-width: 600px) {
-    h1 {
-        font-size: 1.8em;
-    }
-
-    h2, .section-title {
-        font-size: 1.4em;
-    }
-
-    h3 {
-        font-size: 1.1em;
+    .dashboard-grid {
+        grid-gap: 10px;
     }
 
     .main-container {
-        padding: 15px;
+        padding:10px;
     }
 
-    .logo {
-        height: 60px;
-    }
-
-    .dashboard-grid {
-        grid-template-columns: 1fr; /* Single column on mobile */
-    }
 }
