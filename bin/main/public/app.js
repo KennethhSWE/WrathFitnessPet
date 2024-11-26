@@ -193,7 +193,7 @@ async function logWorkout() {
     }
 
     if (isNaN(reps) || reps <= 0) {
-        showToast('Reps must be a positive number.' 'erroe');
+        showToast('Reps must be a positive number.', 'error');
         return;
     }
 

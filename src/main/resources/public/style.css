@@ -310,7 +310,7 @@ button:active, .onboarding-button:active {
 
 /* Toast Style */
 .toast {
-    position fixed; 
+    position: fixed; 
     bottom: 20px;
     right: 20px;
     padding: 15px 20px;
@@ -341,7 +341,6 @@ button:active, .onboarding-button:active {
     }
 }
 
-@keyframes 
 
 /* Error Message Styling */
 .error-message {
