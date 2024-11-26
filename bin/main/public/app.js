@@ -1,7 +1,7 @@
 // JavaScript to handle the Hero Academy Gym app
 
 // Check if user is already logged in on page load
-/*window.onload = async function () {
+window.onload = async function () {
     try {
         const response = await fetch('/check-session', { method: 'GET' });
         if (response.ok) {
@@ -18,15 +18,15 @@
         console.error("Error checking session:", error);
         showRegistration();
     }
-};*/
-
+};
+/*
 // Testing for live view of dashboard changes!
 window.onload = function () {
     document.getElementById('username-display').innerText = 'TestUser';
     showDashboard();
     initializeCharacterPreview();
     updateXPProgress(1, 50, 100);
-};
+}; */
 
 //show toast function 
 function showToast(message, type) {
@@ -41,21 +41,6 @@ function showToast(message, type) {
         toast.remove();
     }, 3000);
 }
-
-//Diplay notifications function 
-function showToast(message, type) {
-    const toast = document.createElement('div');
-    toast.className = 'toast toast-$(type)';
-    toast.innerText = message; 
-
-    document.body.appendChild(toast);
-
-    //Remove the toast after 3 seconds
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
-}
-
 
 // Show the dashboard and hide other sections
 function showDashboard() {
