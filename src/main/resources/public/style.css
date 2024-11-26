@@ -244,6 +244,17 @@ header {
     color: var(--accent-color);
 }
 
+/* Workout History Card Styles */
+.workout-card {
+    background-color: var(--card-background);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+
 /* Workout Logging Card */
 #workout-section {
     grid-column: 1 / 3;
@@ -297,6 +308,41 @@ button:active, .onboarding-button:active {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Toast Style */
+.toast {
+    position fixed; 
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeIn 0.5s ease, fadeout 0.5s ease 2.5s;
+}
+
+.toast-success {
+    background-color: var(--accent-color);
+}
+
+.toast-error {
+    background-color: var(--error-color);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes 
+
 /* Error Message Styling */
 .error-message {
     color: var(--error-color);
@@ -316,4 +362,47 @@ button:active, .onboarding-button:active {
         padding:10px;
     }
 
+/* Toast Notification Styles */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s;
+}
+
+.toast-success {
+background-color: var(--accent-color);
+}
+
+.toast-error {
+    background-color: var(--error-color);
+}
+
+@keyframes fadIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
 }

@@ -28,6 +28,35 @@ window.onload = function () {
     updateXPProgress(1, 50, 100);
 };
 
+//show toast function 
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    // Remove the toast after 3 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+//Diplay notifications function 
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-$(type)';
+    toast.innerText = message; 
+
+    document.body.appendChild(toast);
+
+    //Remove the toast after 3 seconds
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+
 // Show the dashboard and hide other sections
 function showDashboard() {
     document.getElementById('registration-container').style.display = 'none';
@@ -167,14 +196,19 @@ function login() {
 
 // Log workout function with error handling and feedback
 async function logWorkout() {
-    const weight = document.getElementById('weight').value;
-    const reps = document.getElementById('reps').value;
+    const weight = parseInt(document.getElementById('weight').value, 10);
+    const reps = parseInt(document.getElementById('reps').value, 10);
     const dailyGoal = document.getElementById('dailyGoal').checked;
     const streakBonus = document.getElementById('streakBonus').checked;
 
-    if (!weight || !reps) {
+    if (isNaN(weight) || weight <= 0) {
         document.getElementById('workout-message').innerText =
-            'Please fill in the weight and reps.';
+            showToast('Weight must be a positive number.', 'error');
+        return;
+    }
+
+    if (isNaN(reps) || reps <= 0) {
+        showToast('Reps must be a positive number.' 'erroe');
         return;
     }
 
@@ -200,6 +234,45 @@ async function logWorkout() {
     }
 }
 
+//logging the workouts 
+async function logWorkout() {
+    const weight = parseInt(document.getElementById('weight').value, 10);
+    const reps = parseInt(document.getElementById('reps').value, 10);
+    const dailyGoal = document.getElementById('dailyGoal').checked;
+    const streakBonus = document.getElementById('streakBonus').checked;
+
+    if (isNaN(weight) || weight <= 0) {
+        showToast('Weight must be a positive number.', 'error');
+        return;
+    }
+
+    if (isNaN(reps) || reps <= 0) {
+        showToast('Reps must be a positive number.', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch('/logWorkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ weight, reps, dailyGoal, streakBonus }),
+        });
+
+        if (response.ok) {
+            showToast('Workout logged successfully!', 'success');
+            fetchWorkoutHistory();
+        }
+        else {
+            const message = await response.text();
+            showToast(message || 'Failed to log workout.', 'error');
+        }
+    }
+    catch (error) {
+        console.error('Error logging workout:', error);
+        showToast('An error occurred. Please try again.', 'error');
+    }
+}
+
 // Fetch workout history
 async function fetchWorkoutHistory() {
     try {
@@ -207,15 +280,18 @@ async function fetchWorkoutHistory() {
         if (response.ok) {
             const workoutHistory = await response.json();
             const historyElement = document.getElementById('workout-history');
-            historyElement.innerHTML = workoutHistory
-                .map((workout) => {
-                    return `<p>${new Date(
-                        workout.timestamp
-                    ).toLocaleString()} - Weight: ${
-                        workout.weight
-                    } lbs, Reps: ${workout.reps}</p>`;
-                })
-                .join('');
+            historyElement.innerHTML = ''; // Clear existing history
+
+            workoutHistory.forEach(workout => {
+                const workoutCard = document.createElement('div');
+                workoutCard.className = 'workout-card';
+                workoutCard.innerHTML = `
+                    <p><strong>Date:</strong> ${new Date(workout.timestamp).toLocaleString()}</p>
+                    <p><strong>Weight:</strong> ${workout.weight} lbs</p>
+                    <p><strong>Reps:</strong> ${workout.reps}</p>
+                `;
+                historyElement.appendChild(workoutCard);
+            });
         } else {
             console.error('Failed to fetch workout history');
         }
@@ -223,6 +299,7 @@ async function fetchWorkoutHistory() {
         console.error('Error fetching workout history:', error);
     }
 }
+
 
 // Fetch user stats including level and XP to dynamically update the dashboard
 async function fetchUserStats() {
