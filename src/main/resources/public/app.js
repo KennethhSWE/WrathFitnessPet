@@ -96,11 +96,11 @@ function initializeCharacterPreview() {
   }
 
   // Lighting set up
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
   scene.add(ambientLight);
 
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  directionalLight.position.set(5, 10, 7.5).normalize();
+  directionalLight.position.set(0, 10, 10).normalize();
   scene.add(directionalLight);
 
   // point lighting
@@ -116,8 +116,8 @@ function initializeCharacterPreview() {
       spinner.style.display = "none"; // Hide spinner after avatar loads
       modelPreview.innerHTML = "";
 
-      object.scale.set(0.021, 0.021, 0.021); // Adjust scale
-      object.position.set(0, -1, 0); // Set initial position of the object
+      object.scale.set(0.05, 0.5, 0.05); // Adjust scale
+      object.position.set(0, 0, 0); // Set initial position of the object
       scene.add(object);
 
       // Set up animation mixer for the model
