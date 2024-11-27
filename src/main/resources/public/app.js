@@ -67,7 +67,10 @@ function showRegistration() {
 // Initialize Three.js character preview for the avatar section
 function initializeCharacterPreview() {
     const spinner = document.getElementById('avatar-spinner');
+    const modelPreview = document.getElementById('model-preview');
+
     spinner.style.display = 'block'; // Show spinner before avatar loads
+    modelPreview.innerHTML = '<p>Loading Avatar...</p>';
 
     // Three.js setup
     const scene = new THREE.Scene();
@@ -76,7 +79,6 @@ function initializeCharacterPreview() {
     renderer.setSize(300, 300);
 
     // Clear existing content in the model-preview and add the renderer
-    const modelPreview = document.getElementById('model-preview');
     modelPreview.innerHTML = ''; // Clear any previous renderers
     modelPreview.appendChild(renderer.domElement);
 
