@@ -101,6 +101,7 @@ function initializeCharacterPreview() {
         '/proxy-fbx',
         function (object) {
             spinner.style.display = 'none'; // Hide spinner after avatar loads
+            modelPreview.innerHTML = '';
 
             object.scale.set(0.021, 0.021, 0.021); // Adjust scale
             object.position.set(0, -1, 0); // Set initial position of the object
