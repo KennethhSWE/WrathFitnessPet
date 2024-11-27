@@ -70,7 +70,7 @@ function initializeCharacterPreview() {
     const modelPreview = document.getElementById('model-preview');
 
     spinner.style.display = 'block'; // Show spinner before avatar loads
-    modelPreview.innerHTML = '<p>Loading Avatar...</p>';
+    modelPreview.innerHTML = '';
 
     // Three.js setup
     const scene = new THREE.Scene();
@@ -83,11 +83,17 @@ function initializeCharacterPreview() {
     modelPreview.appendChild(renderer.domElement);
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
     directionalLight.position.set(5, 10, 7.5).normalize();
     scene.add(directionalLight);
+
+    // point lighting 
+    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+    pointLight.position.set(0, 5, 5);
+    scene.add(pointLight);
 
     // Load the FBX model
     const loader = new THREE.FBXLoader();
